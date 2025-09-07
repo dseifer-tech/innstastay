@@ -58,7 +58,7 @@
     "@typescript-eslint/parser": "^6.21.0",
     "dotenv": "^17.2.1",
     "eslint": "^8",
-    "eslint-config-next": "14.0.4",
+    "eslint-config-next": "^14.2.31",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
