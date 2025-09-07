@@ -10,8 +10,12 @@ node_modules/
 /.next/
 /out/
 
+# Backup/temporary Next.js builds
+.next.bak*/
+
 # Production
 /build
+dist/
 
 # Misc
 .DS_Store
@@ -81,6 +85,10 @@ tatus*
 
 # Logs
 *.log
+logs/
+
+# Sanity runtime output
+.sanity/
 
 # IDE
 .vscode/
