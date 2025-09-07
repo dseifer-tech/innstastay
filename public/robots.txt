@@ -1,0 +1,50 @@
+# InnstaStay Robots.txt
+# Generated automatically
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.innstastay.com/sitemap.xml
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow important pages
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /hotels/
+Allow: /search
+Allow: /privacy
+
+# Crawl delay (optional - be respectful to search engines)
+Crawl-delay: 1
+
+# Specific rules for different user agents
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Host directive
+Host: https://www.innstastay.com

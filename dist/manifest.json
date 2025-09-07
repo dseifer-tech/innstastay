@@ -1,0 +1,77 @@
+{
+  "name": "InnstaStay - Commission-Free Hotel Booking",
+  "short_name": "InnstaStay",
+  "description": "Book hotels directly in Toronto with no commissions, no markups, and no hidden fees. Compare real-time direct rates from verified hotels.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["travel", "business", "lifestyle"],
+  "icons": [
+    {
+      "src": "/innstastay-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "InnstaStay Hotel Search Interface"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "InnstaStay Mobile Hotel Booking"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Hotels",
+      "short_name": "Search",
+      "description": "Search for hotels in Toronto",
+      "url": "/search",
+      "icons": [
+        {
+          "src": "/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Downtown Hotels",
+      "short_name": "Downtown",
+      "description": "Browse downtown Toronto hotels",
+      "url": "/hotels/toronto-downtown",
+      "icons": [
+        {
+          "src": "/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

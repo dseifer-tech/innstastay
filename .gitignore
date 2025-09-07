@@ -1,0 +1,92 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+.env
+.env.production
+.env.development
+.env.test
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Development files
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!next.config.js
+!tailwind.config.js
+!postcss.config.js
+!next-env.d.ts
+!sitemap.xml
+!robots.txt
+!manifest.json
+!sanity.config.ts
+!sanity.cli.ts
+!sanity/schemaTypes/*.ts
+!sanity/structure.ts
+!sanity/env.ts
+
+# Build artifacts and temporary files
+seo-report.json
+raw.json/
+data/
+coverage/
+*.tsbuildinfo
+.swc/
+
+# Corrupted or malformed files
+eo*
+ive*
+tatus*
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db 
