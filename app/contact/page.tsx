@@ -4,6 +4,7 @@ import { draftMode } from 'next/headers'
 import { isCmsPagesEnabled } from '@/lib/cms/flags'
 import { getPageBySlug } from '@/lib/cms/page'
 import { buildPageMetadata } from '@/lib/seo'
+import ContactPageClient from './ContactPageClient'
 
 export async function generateMetadata(): Promise<Metadata> {
   if (!isCmsPagesEnabled()) {
@@ -33,13 +34,17 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   if (!isCmsPagesEnabled()) {
-    return <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">CMS pages are disabled.</div>
+    return <ContactPageClient />
   }
   const isDraft = draftMode().isEnabled
   const page = await getPageBySlug('contact', { drafts: isDraft })
+  const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
+  if (!sections.length) {
+    return <ContactPageClient />
+  }
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-      <SectionRenderer sections={page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []} />
+      <SectionRenderer sections={sections} />
     </main>
   )
 }
