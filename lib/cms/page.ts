@@ -47,7 +47,7 @@ export async function getPageBySlug(slug: string, opts?: { drafts?: boolean; fet
 
 export async function getAllPageSlugs() {
   const query = `*[_type == "page" && defined(slug.current) && !excludeFromSitemap]{"slug": slug.current, _updatedAt}`
-  return client.fetch(query)
+  return getClient().fetch(query)
 }
 
 
