@@ -43,3 +43,18 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 })
+
+// ---- CMS/global mocks ----
+// Mock preview state. Override per-test if needed.
+jest.mock('next/headers', () => ({
+  draftMode: () => ({ isEnabled: false }),
+}))
+
+// Mock canonical client so tests NEVER import `next-sanity` (ESM).
+jest.mock('@/lib/cms/sanityClient', () => {
+  const fetch = jest.fn(async (_groq, _params, _opts) => ({}))
+  return {
+    getClient: () => ({ fetch }),
+    __mock: { fetch },
+  }
+})
