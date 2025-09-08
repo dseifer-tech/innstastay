@@ -1,16 +1,13 @@
-## InnstaStay – CMS Integration and Current Status
+## InnstaStay – Project Overview
 
 ### Overview
 InnstaStay is a Next.js 14 (App Router) project with Sanity Studio as the single source of truth for marketing pages, navigation, site settings, and reusable fragments. Real‑time hotel pricing/search remains server‑side (SerpAPI/official sources). This document summarizes what was implemented today, how to operate the CMS workflows, and what remains for go‑live.
 
-### Today’s Changes (High‑level)
-- Deployed Sanity Studio at `https://innstastay.sanity.studio/` and locked to dataset `production`.
-- Fixed Studio SchemaError and fully registered all schemas.
-- Seeded content: `siteSettings`, `navigation`, pages (`home`, `about`, `contact`, `privacy`), and created `hotels/toronto-downtown`.
-- Added a `Trust + Why Book Direct` fragment and referenced it on the homepage.
-- Imported 15 POIs with ratings/reviews/image URLs and attached a `poiGrid` to the downtown page; uploaded Sanity assets for most images.
-- CMS integration fixes: Money typing for price display, GA4 typings, hotel JSON‑LD, and build/lint clean.
-- Hardened webhooks by adding a secret header check to `/api/revalidate` and `/api/redirects`.
+### Summary
+- Next.js 14 App Router, React 18, TypeScript (strict)
+- Sanity CMS v4 for marketing pages/navigation/settings
+- TailwindCSS for styling
+- Jest for tests
 
 ### Tech Stack
 - Framework: Next.js 14 (App Router), React 18, TypeScript
@@ -18,18 +15,11 @@ InnstaStay is a Next.js 14 (App Router) project with Sanity Studio as the single
 - Styling: Tailwind CSS
 - Tests: Jest (configured for Next)
 
-### Repository Map (Key Files)
-- Pages integrating CMS: `app/page.tsx`, `app/about/page.tsx`, `app/contact/page.tsx`, `app/privacy/page.tsx`, `app/hotels/toronto-downtown/page.tsx`
-- Renderers: `app/components/SectionRenderer.tsx` (section blocks), `app/components/Portable.tsx` (Portable Text)
-- Hotel page SEO/JSON‑LD: `app/hotels/[slug]/page.tsx`
-- API routes (secured):
-  - `app/api/revalidate/route.ts` (requires `x-revalidate-secret`)
-  - `app/api/redirects/route.ts` (requires `x-revalidate-secret`)
-- Sanity schemas:
-  - Index: `sanity/schemaTypes/index.ts`
-  - Blocks: `sanity/schemaTypes/blocks/{hero,richText,hotelCarousel,poiGrid,fragmentRef,poi}.ts`
-  - Docs: `sanity/schemaTypes/{page,fragment,siteSettings,navigation,redirect,hotel,location}.ts`
-  - Studio config: `sanity.config.ts`, `sanity/env.ts` (dataset = `production`), `sanity/structure.ts`
+### Key Files
+- Pages with CMS integration: `app/page.tsx`, `app/about/page.tsx`, `app/contact/page.tsx`, `app/privacy/page.tsx`, `app/hotels/toronto-downtown/page.tsx`
+- CMS section renderers: `app/components/SectionRenderer.tsx`, `app/components/Portable.tsx`
+- API routes: `app/api/*` (see SUMMARY.md for table)
+- Sanity schemas: `sanity/schemaTypes/*`, studio config `sanity.config.ts`
 
 ### Content Models (Authoring)
 - `page` (document): `title`, `slug`, optional top‑level `hero`, `sections[]` (one of `hero`, `richText`, `hotelCarousel`, `poiGrid`, `fragmentRef`)
@@ -40,18 +30,33 @@ InnstaStay is a Next.js 14 (App Router) project with Sanity Studio as the single
 - `poi` (document): `name`, `slug`, `shortDescription`, `url`, `image` (Sanity asset), and extended fields `imageUrl` (source), `rating`, `reviews`
 
 ### Environment Variables
-Add to `.env.local` (and hosting env):
+Create `.env.local` (and set in hosting env) with:
 ```
+# Feature flags
 USE_CMS_PAGES=true
+
+# Revalidation/preview security
 REVALIDATE_SECRET=your-long-random-string
 SANITY_PREVIEW_SECRET=your-preview-secret
-NEXT_PUBLIC_SANITY_PROJECT_ID=6rewx4dr
+
+# Sanity (public)
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
 NEXT_PUBLIC_SANITY_DATASET=production
-SANITY_API_TOKEN=your-editor-token
+
+# Sanity (server)
+SANITY_API_TOKEN=your_editor_token
+
+# Pricing / SerpApi
+SERPAPI_KEY=your_serpapi_key
+PRICE_DEBUG=0
+PRICE_WRITE_FILES=0
+
+# Analytics
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
 ### Webhooks (Sanity → Site)
-Create in Sanity Manage: `https://www.sanity.io/manage/p/6rewx4dr/api#webhooks`.
+Create in Sanity Manage for your project.
 
 - Revalidate pages
   - URL: `https://YOUR_SITE_DOMAIN/api/revalidate`
@@ -84,14 +89,8 @@ node -r dotenv/config scripts/<script>.js dotenv_config_path=.env.local
 - `import-pois-hardcoded.js` – imports 15 POIs (ratings/reviews/imageUrl) and updates downtown `poiGrid`
 - `backfill-poi-images.js` – uploads `poi.imageUrl` to Sanity assets and sets the `image` field
 
-### Current Status
-- Studio live and healthy (dataset: `production`).
-- Pages in Sanity:
-  - `home`: synced to site copy; ready to publish in Studio.
-  - `about`, `contact`, `privacy`: seeded and editable.
-  - `hotels/toronto-downtown`: hero + intro + `hotelCarousel` + `poiGrid`.
-- POIs: 15 created with ratings/reviews; 13 images uploaded to Sanity; 2 remain with external `imageUrl` (replace in Studio).
-- Next.js build: successful with `USE_CMS_PAGES=true`. Lint errors resolved.
+### Status
+- See `SUMMARY.md` for the full route/API/env/security overview and risk register.
 
 ### Go‑Live Checklist
 - [ ] Publish `home` and `hotels/toronto-downtown` in Studio
@@ -186,9 +185,7 @@ innstastay/
 └── SECURITY_SUMMARY.md        # 🔒 Quick security reference
 ```
 
-## 🔧 API Endpoints
-
-### Admin Hotel Management
+## API Endpoints
 
 #### `POST /api/admin/hotels/search`
 Searches for hotels using SerpAPI Google Hotels.
@@ -284,7 +281,7 @@ Fetches real-time pricing data from SerpAPI.
 }
 ```
 
-## ��️ Architecture
+## Architecture
 
 ### Sanity-as-Source-of-Truth Compliance
 
