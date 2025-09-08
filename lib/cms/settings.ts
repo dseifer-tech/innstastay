@@ -1,4 +1,4 @@
-import { client } from '@/sanity/lib/client'
+import { getClient } from '@/lib/cms/sanityClient'
 
 export type SiteSettings = {
   gtmId?: string
@@ -13,7 +13,7 @@ export type SiteSettings = {
 
 export async function getSiteSettings() {
   const query = `*[_type == "siteSettings"][0]{ gtmId, gaId, defaultSeo }`
-  return client.fetch<SiteSettings | null>(query)
+  return getClient().fetch<SiteSettings | null>(query)
 }
 
 

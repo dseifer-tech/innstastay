@@ -1,4 +1,4 @@
-import { client } from '@/sanity/lib/client'
+import { getClient } from '@/lib/cms/sanityClient'
 
 export type CmsSection =
   | ({ _type: 'hero' } & any)
@@ -29,18 +29,15 @@ export async function getPageBySlug(slug: string, opts?: { drafts?: boolean; fet
     _updatedAt
   }`
   // First try published content (via CDN if not explicitly requesting drafts)
-  const published = await client
-    .withConfig({ useCdn: !opts?.drafts })
-    .fetch(query, { slug }, opts?.fetchOptions)
+  const client = getClient()
+  const published = await client.fetch(query, { slug }, opts?.fetchOptions)
   if (published || !opts?.drafts) return published
 
   // Optional: fallback to drafts when requested and token is available
   const token = process.env.SANITY_API_TOKEN
-  if (token) {
+  if (token && opts?.drafts) {
     try {
-      return await client
-        .withConfig({ useCdn: false, token, perspective: 'previewDrafts' as any })
-        .fetch(query, { slug }, opts?.fetchOptions)
+      return await client.fetch(query, { slug }, opts?.fetchOptions)
     } catch (_) {
       // swallow and return published (null) below
     }

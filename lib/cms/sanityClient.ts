@@ -18,6 +18,7 @@ export function getClient() {
   })
 }
 
-export { client } from '@/sanity/lib/client'
+// Deprecated: avoid importing the raw client directly elsewhere
+// Prefer getClient() above for consistent preview/published behavior
 
 

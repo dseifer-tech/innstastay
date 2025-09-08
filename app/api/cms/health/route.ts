@@ -1,5 +1,5 @@
 import { draftMode } from 'next/headers'
-import { client as baseClient } from '@/sanity/lib/client'
+import { getClient } from '@/lib/cms/sanityClient'
 
 async function time<T>(fn: () => Promise<T>): Promise<{ ms: number; value?: T; error?: string }> {
   const start = Date.now()
@@ -19,13 +19,13 @@ export async function GET() {
   // Minimal GROQ that should always exist if Studio is set up
   const query = '*[_type == "siteSettings"][0]{ _id }'
 
-  const publishedProbe = await time(() => baseClient.withConfig({ useCdn: true }).fetch(query))
+  const publishedProbe = await time(() => getClient().fetch(query))
 
   let canPreviewDrafts = false
   let previewProbe = { ms: 0 }
   const token = process.env.SANITY_API_TOKEN
   if (token) {
-    const res = await time(() => baseClient.withConfig({ useCdn: false, token, perspective: 'previewDrafts' as any }).fetch(query))
+    const res = await time(() => getClient().fetch(query))
     previewProbe = { ms: res.ms }
     canPreviewDrafts = !res.error
   }
