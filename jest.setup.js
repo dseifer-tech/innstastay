@@ -29,17 +29,33 @@ jest.mock('next/image', () => ({
   },
 }))
 
-// Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
+// Mock window.matchMedia only when window exists (Node env has no window)
+if (typeof globalThis.window !== 'undefined' && typeof globalThis.window.matchMedia === 'undefined') {
+  globalThis.window.matchMedia = function matchMedia(query) {
+    return {
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {}, // deprecated
+      removeListener: () => {}, // deprecated
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }
+  }
+}
+
+// ---- CMS/global mocks ----
+// Mock preview state. Override per-test if needed.
+jest.mock('next/headers', () => ({
+  draftMode: () => ({ isEnabled: false }),
+}))
+
+// Mock canonical client so tests NEVER import `next-sanity` (ESM).
+jest.mock('@/lib/cms/sanityClient', () => {
+  const fetch = jest.fn(async (_groq, _params, _opts) => ({}))
+  return {
+    getClient: () => ({ fetch }),
+    __mock: { fetch },
+  }
 })

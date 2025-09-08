@@ -1,4 +1,4 @@
-import { client } from '@/sanity/lib/client'
+import { getClient } from '@/lib/cms/sanityClient'
 
 export type Redirect = { fromPath: string; toPath: string; status: 301 | 302 }
 
@@ -9,7 +9,7 @@ export async function getRedirectsCached(): Promise<Redirect[]> {
   const now = Date.now()
   if (cache && now - cache.ts < TTL_MS) return cache.data
   const query = `*[_type == "redirect"]{ fromPath, toPath, status }`
-  const raw = await client.fetch<Redirect[]>(query).catch(() => [])
+  const raw = await getClient().fetch<Redirect[]>(query).catch(() => [])
   const data = raw.map(sanitizeRedirect).filter(Boolean) as Redirect[]
   cache = { ts: now, data }
   return data

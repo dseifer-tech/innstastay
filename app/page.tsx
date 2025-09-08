@@ -38,7 +38,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   if (isCmsPagesEnabled()) {
     const isDraft = draftMode().isEnabled
-    const page = await getPageBySlug('home', { drafts: isDraft })
+    const page = await getPageBySlug('home', {
+      drafts: isDraft,
+      fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:home'] } },
+    })
     const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
     const extraSections = sections.filter((s: any) => s?._type !== 'hero')
     return (

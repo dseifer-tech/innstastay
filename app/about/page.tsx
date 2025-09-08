@@ -37,7 +37,10 @@ export default async function AboutPage() {
     return <AboutPageClient />
   }
   const isDraft = draftMode().isEnabled
-  const page = await getPageBySlug('about', { drafts: isDraft })
+  const page = await getPageBySlug('about', {
+    drafts: isDraft,
+    fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:about'] } },
+  })
   const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
   if (!sections.length) {
     return <AboutPageClient />

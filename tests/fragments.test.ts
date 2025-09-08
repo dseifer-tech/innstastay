@@ -1,16 +1,22 @@
+const fetchMock = jest.fn().mockResolvedValue({ sections: [] })
 jest.mock('@/lib/cms/sanityClient', () => ({
-  client: { fetch: jest.fn() },
+  getClient: () => ({ fetch: fetchMock }),
+  __mock: { fetch: fetchMock },
 }))
-import { client } from '@/lib/cms/sanityClient'
-import { expandFragmentRefs } from '@/lib/cms/resolveFragments'
-
-const mockFetch = client.fetch as jest.Mock
 
 describe('expandFragmentRefs', () => {
-  beforeEach(() => mockFetch.mockReset())
+  let expandFragmentRefs: any
+  beforeEach(() => {
+    jest.resetModules()
+    fetchMock.mockReset().mockResolvedValue({ sections: [] })
+    jest.isolateModules(() => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      ({ expandFragmentRefs } = require('@/lib/cms/resolveFragments'))
+    })
+  })
 
   it('expands a simple fragmentRef into its sections', async () => {
-    mockFetch.mockImplementation((_q: any, { id }: any) => {
+    fetchMock.mockImplementation((_q: any, { id }: any) => {
       if (id === 'frag1') return Promise.resolve({ sections: [{ _type: 'richText', body: [] }] })
       return Promise.resolve(null)
     })
@@ -19,7 +25,7 @@ describe('expandFragmentRefs', () => {
   })
 
   it('guards against loops', async () => {
-    mockFetch.mockImplementation((_q: any, { id }: any) => {
+    fetchMock.mockImplementation((_q: any, { id }: any) => {
       if (id === 'loop') return Promise.resolve({ sections: [{ _type: 'fragmentRef', refId: 'loop' }] })
       return Promise.resolve(null)
     })

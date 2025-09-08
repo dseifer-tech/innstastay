@@ -36,7 +36,10 @@ export default async function DowntownPage() {
   }
 
   const isDraft = draftMode().isEnabled
-  const page = await getPageBySlug('hotels/toronto-downtown', { drafts: isDraft })
+  const page = await getPageBySlug('hotels/toronto-downtown', {
+    drafts: isDraft,
+    fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:hotels/toronto-downtown'] } },
+  })
 
   // Fallback to static client page if CMS page is missing or empty
   const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
