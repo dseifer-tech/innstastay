@@ -6,9 +6,19 @@ jest.mock('next/cache', () => ({
 }))
 
 import { revalidatePath, revalidateTag } from 'next/cache'
-import * as handler from '@/app/api/revalidate/route'
 
 const SECRET = 'testsecret'
+process.env.REVALIDATE_SECRET = SECRET
+
+// Import the handler after env+mock are set, and isolate module cache
+let POST: (req: NextRequest) => Promise<Response>
+beforeAll(() => {
+  jest.isolateModules(() => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require('@/app/api/revalidate/route')
+    POST = mod.POST
+  })
+})
 
 function req(body: any, headers: Record<string, string> = {}) {
   return new NextRequest('http://localhost/api/revalidate', {
@@ -24,7 +34,7 @@ describe('/api/revalidate', () => {
   })
 
   it('revalidates tags when provided', async () => {
-    const res = await (handler as any).POST(req({ tags: ['navigation', 'page:about'] }, { 'x-revalidate-secret': SECRET }) as any)
+    const res = await POST(req({ tags: ['navigation', 'page:about'] }))
     expect(revalidateTag).toHaveBeenCalledWith('navigation')
     expect(revalidateTag).toHaveBeenCalledWith('page:about')
     expect(revalidatePath).not.toHaveBeenCalled()
@@ -32,7 +42,7 @@ describe('/api/revalidate', () => {
   })
 
   it('revalidates paths when provided', async () => {
-    const res = await (handler as any).POST(req({ paths: ['/about', '/contact'] }, { 'x-revalidate-secret': SECRET }) as any)
+    const res = await POST(req({ paths: ['/about', '/contact'] }))
     expect(revalidatePath).toHaveBeenCalledWith('/about')
     expect(revalidatePath).toHaveBeenCalledWith('/contact')
     expect(revalidateTag).not.toHaveBeenCalled()
