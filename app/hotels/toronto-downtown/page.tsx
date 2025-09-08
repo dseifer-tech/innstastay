@@ -4,6 +4,7 @@ import { isCmsPagesEnabled } from '@/lib/cms/flags'
 import { getPageBySlug } from '@/lib/cms/page'
 import SectionRenderer from '@/app/components/SectionRenderer'
 import { buildPageMetadata } from '@/lib/seo'
+import { draftMode } from 'next/headers'
 
 export async function generateMetadata(): Promise<Metadata> {
   if (!isCmsPagesEnabled()) {
@@ -30,13 +31,22 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DowntownPage() {
-  if (isCmsPagesEnabled()) {
-    const page = await getPageBySlug('hotels/toronto-downtown')
-    return (
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-        <SectionRenderer sections={page?.sections} />
-      </main>
-    )
+  if (!isCmsPagesEnabled()) {
+    return <DowntownPageClient />
   }
-  return <DowntownPageClient />
+
+  const isDraft = draftMode().isEnabled
+  const page = await getPageBySlug('hotels/toronto-downtown', { drafts: isDraft })
+
+  // Fallback to static client page if CMS page is missing or empty
+  const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
+  if (!sections.length) {
+    return <DowntownPageClient />
+  }
+
+  return (
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+      <SectionRenderer sections={sections} />
+    </main>
+  )
 }
