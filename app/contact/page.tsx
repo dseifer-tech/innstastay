@@ -37,7 +37,10 @@ export default async function ContactPage() {
     return <ContactPageClient />
   }
   const isDraft = draftMode().isEnabled
-  const page = await getPageBySlug('contact', { drafts: isDraft })
+  const page = await getPageBySlug('contact', {
+    drafts: isDraft,
+    fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:contact'] } },
+  })
   const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
   if (!sections.length) {
     return <ContactPageClient />
