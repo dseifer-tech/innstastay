@@ -4,6 +4,7 @@
 // Usage: node -r dotenv/config scripts/seed-cms.js dotenv_config_path=.env.local
 
 const { createClient } = require('@sanity/client')
+const crypto = require('crypto')
 
 const PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
 const DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
@@ -32,12 +33,13 @@ async function upsert(doc) {
 }
 
 function pageDoc(id, title, slug, sections = []) {
+  const withKeys = (arr = []) => arr.map((it) => ({ _key: it._key || (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)), ...it }))
   return {
     _id: id,
     _type: 'page',
     title,
     slug: { _type: 'slug', current: slug },
-    sections,
+    sections: withKeys(sections),
   }
 }
 
@@ -47,6 +49,8 @@ async function run() {
   const results = []
 
   // 1) Site Settings
+  const withKeys = (arr = []) => arr.map((it) => ({ _key: it._key || (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)), ...it }))
+
   results.push(await upsert({
     _id: 'siteSettings.default',
     _type: 'siteSettings',
@@ -63,23 +67,27 @@ async function run() {
   results.push(await upsert({
     _id: 'navigation.main',
     _type: 'navigation',
-    mainMenu: [
+    mainMenu: withKeys([
       { _type: 'object', label: 'Home', href: '/' },
       { _type: 'object', label: 'Search', href: '/search' },
       { _type: 'object', label: 'About', href: '/about' },
       { _type: 'object', label: 'Contact', href: '/contact' },
       { _type: 'object', label: 'Privacy', href: '/privacy' },
-    ],
-    footerMenu: [
+    ]),
+    footerMenu: withKeys([
       { _type: 'object', label: 'Privacy', href: '/privacy' },
       { _type: 'object', label: 'Contact', href: '/contact' },
-    ],
+    ]),
   }))
 
   // 3) Pages
   const hero = (headline, subhead) => ({ _type: 'hero', headline, subhead })
+  const pt = (text) => {
+    const key = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2))
+    const childKey = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2))
+    return [{ _key: key, _type: 'block', style: 'normal', children: [{ _key: childKey, _type: 'span', text }] }]
+  }
   const rich = (body) => ({ _type: 'richText', body })
-  const pt = (text) => ([{ _type: 'block', style: 'normal', children: [{ _type: 'span', text }] }])
 
   results.push(await upsert(pageDoc('page.home', 'Home', 'home', [
     hero('Find real hotel prices. Book direct.', 'No commissions. No markups.'),
