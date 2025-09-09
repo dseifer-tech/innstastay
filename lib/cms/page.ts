@@ -9,70 +9,7 @@ export type CmsSection =
   | ({ _type: 'faq' } & any)
 
 export async function getPageBySlug(slug: string, opts?: { drafts?: boolean; fetchOptions?: any }) {
-  const query = `*[_type=="page" && slug.current==$slug][0]{
-    title,
-    "slug": slug.current,
-    // Ensure hero image includes a url for rendering
-    hero{
-      ...,
-      image{..., "asset": {"url": asset->url}}
-    },
-    seo,
-    sections[]{
-      ...,
-      // Normalize image url for hero sections
-      _type=="hero" => {
-        ...,
-        image{..., "asset": {"url": asset->url}}
-      },
-      // Expand referenced fragments and normalize their inner sections
-      _type=="fragmentRef" => {
-        "sections": ref->sections[]{
-          ...,
-          _type=="hero" => {
-            ...,
-            image{..., "asset": {"url": asset->url}}
-          },
-          _type=="hotelCarousel" => {
-            hotels[]-> {
-              _id,
-              name,
-              "slug": slug.current,
-              images[]{..., "asset": {"url": asset->url}}
-            }
-          },
-          _type=="poiGrid" => {
-            pois[]->{
-              _id,
-              name,
-              image{..., "asset": {"url": asset->url}},
-              url,
-              shortDescription
-            }
-          }
-        }
-      },
-      // Normalize images for direct sections as well
-      _type=="hotelCarousel" => {
-        hotels[]-> {
-          _id,
-          name,
-          "slug": slug.current,
-          images[]{..., "asset": {"url": asset->url}}
-        }
-      },
-      _type=="poiGrid" => {
-        pois[]->{
-          _id,
-          name,
-          image{..., "asset": {"url": asset->url}},
-          url,
-          shortDescription
-        }
-      }
-    },
-    _updatedAt
-  }`
+  const query = `*[_type=="page" && slug.current==$slug][0]{ _id, title, "slug": slug.current, hero, seo, sections, _updatedAt }`
   // First try published content (via CDN if not explicitly requesting drafts)
   const client = getClient()
   const published = await client.fetch(query, { slug }, opts?.fetchOptions)
