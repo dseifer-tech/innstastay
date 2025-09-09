@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { format, addDays } from 'date-fns';
 import { Menu, X, CheckCircle, Heart, Zap, Shield, DollarSign } from 'lucide-react';
 import SearchBarWide from './components/SearchBarWide';
+import Hero from './components/Hero';
+import SearchSection from './components/SearchSection';
 import LoadingSpinner from './components/LoadingSpinner';
 import OptimizedImage from './components/OptimizedImage';
 import MobileMenu from './components/MobileMenu';
@@ -103,58 +105,58 @@ export default function HomePageClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#eef5ff] to-white">
-      {/* HERO START */}
-      <section id="hero" className="hero">
-        <picture className="hero-media">
-          <OptimizedImage
-            src="/hero/homepage.jpg"
-            alt="Toronto skyline with CN Tower at golden hour"
-            className="hero-img"
-            width={1920} 
-            height={800}
-            priority={true}
-            sizes="100vw"
-          />
-        </picture>
+      {/* HERO: photo only with clear USP and CTAs (no search overlay) */}
+      <Hero 
+        title="Toronto Hotels — Book Direct, Pay Less"
+        subtitle="Live rates direct from verified hotels. No middlemen, no hidden fees."
+        imageSrc="/hero/homepage.jpg"
+        imageAlt="Couple in a modern Toronto hotel suite with skyline view"
+      />
 
-        {/* Gradient overlays */}
-        <div className="hero-overlay hero-overlay-dark"></div>
-        <div className="hero-overlay hero-overlay-fade"></div>
-
-        {/* Content */}
-        <div className="hero-content" role="region" aria-label="Find direct hotel rates in downtown Toronto">
-          <h1 className="hero-title">Downtown Toronto Hotels — Book Direct</h1>
-          <p className="hero-sub">Live rates from verified downtown hotels. No middlemen, no extra fees.</p>
-
-          <div
-            id="search-widget"
-            className="mx-auto w-[min(980px,96vw)] p-0 bg-transparent border-0 shadow-none"
+      {/* CTA row below hero */}
+      <section className="py-6">
+        <div className="mx-auto flex w-[min(980px,96vw)] flex-col items-center justify-center gap-3 sm:flex-row">
+          <a
+            href="#search"
+            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-4 text-white font-semibold text-lg hover:bg-blue-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
           >
-            <SearchBarWide 
-              dateLabel="Dates"
-              dateValue={dateRange[0] && dateRange[1] 
-                ? `${format(dateRange[0], 'MMM dd')} – ${format(dateRange[1], 'MMM dd')}`
-                : 'Select dates'
-              }
-              onOpenDates={() => setShowDatePicker(!showDatePicker)}
-              paxLabel="Travelers"
-              paxValue={getTravelerText()}
-              onOpenPax={() => setShowTravelerModal(!showTravelerModal)}
-              onSearch={handleSearch}
-            />
-          </div>
-
-          <ul className="trust" aria-label="Reasons to book direct in downtown Toronto">
-            <li>📍 Downtown Toronto</li>
-            <li>⚡ Live Direct Rates</li>
-            <li>🟢 No Platform Fees</li>
-          </ul>
+            Compare Direct Rates
+          </a>
+          <a
+            href="#why-direct"
+            className="inline-flex items-center justify-center rounded-xl border-2 border-blue-600 px-6 py-4 text-blue-600 font-semibold text-lg bg-white hover:bg-blue-50 transition-colors"
+          >
+            Learn Why Direct is Better
+          </a>
+        </div>
+        <div className="mt-4 flex items-center justify-center gap-4 text-sm text-gray-700">
+          <span className="inline-flex items-center gap-2"><span>✅</span> Direct Hotel Confirmation</span>
+          <span className="inline-flex items-center gap-2"><span>❌</span> No Hidden Fees</span>
+          <span className="inline-flex items-center gap-2"><span>⚡</span> Instant Support</span>
         </div>
       </section>
-      {/* HERO END */}
+
+      {/* Dedicated Search Section on white card */}
+      <div id="search" className="scroll-mt-24" />
+      <SearchSection>
+        <div className="p-3 md:p-4 lg:p-5">
+          <SearchBarWide 
+            dateLabel="Dates"
+            dateValue={dateRange[0] && dateRange[1] 
+              ? `${format(dateRange[0], 'MMM dd')} – ${format(dateRange[1], 'MMM dd')}`
+              : 'Select dates'
+            }
+            onOpenDates={() => setShowDatePicker(!showDatePicker)}
+            paxLabel="Travelers"
+            paxValue={getTravelerText()}
+            onOpenPax={() => setShowTravelerModal(!showTravelerModal)}
+            onSearch={handleSearch}
+          />
+        </div>
+      </SearchSection>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-white">
+      <section id="why-direct" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-neutral-800 mb-6">
