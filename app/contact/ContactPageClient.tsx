@@ -7,13 +7,6 @@ export default function ContactPageClient() {
   const [copied, setCopied] = useState(false);
   const email = 'info@innstastay.com';
 
-  const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (_) {}
-  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#eef5ff] to-white">
@@ -27,86 +20,96 @@ export default function ContactPageClient() {
         </p>
       </section>
 
-      {/* Contact Card */}
+      {/* Contact Cards */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm p-6 sm:p-8">
-              <div className="flex items-start gap-3">
-                <div className="shrink-0 rounded-xl bg-blue-50 p-3">
-                  <Mail className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-zinc-900">Email</h2>
-                  <p className="text-zinc-600 mt-1">
-                    The fastest way to reach us. We typically reply within one business day.
-                  </p>
-
-                  <div className="mt-4 flex items-center gap-2">
-                    <a
-                      href={`mailto:${email}`}
-                      className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-white text-sm font-medium shadow hover:shadow-md transition"
-                    >
-                      Email us
-                    </a>
-                    <button
-                      onClick={copyEmail}
-                      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm hover:shadow-sm transition"
-                      aria-label="Copy email address"
-                    >
-                      <Copy className="h-4 w-4" />
-                      {copied ? 'Copied!' : 'Copy address'}
-                    </button>
-                  </div>
-
-                  <div className="mt-3 text-sm text-zinc-700">
-                    Or write to: <span className="font-mono">{email}</span>
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* General Support Card */}
+          <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm p-6 sm:p-8">
+            <div className="flex items-start gap-4">
+              <div className="shrink-0 rounded-xl bg-blue-50 p-3">
+                <Mail className="h-6 w-6 text-blue-600" />
               </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-semibold text-zinc-900 mb-2">General Support</h2>
+                <p className="text-zinc-600 mb-4">
+                  Questions about bookings, rates, or using our platform? We&apos;re here to help.
+                </p>
 
-              <hr className="my-6" />
+                <div className="mb-4">
+                  <div className="text-sm font-medium text-zinc-700 mb-2">Email us at:</div>
+                  <div className="font-mono text-blue-600 bg-blue-50 px-3 py-2 rounded-lg">
+                    hello@innstastay.com
+                  </div>
+                </div>
 
-              <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                <li className="flex items-center gap-2 text-zinc-700">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  Direct support — no middlemen
-                </li>
-                <li className="flex items-center gap-2 text-zinc-700">
-                  <Clock className="h-4 w-4 text-blue-600" />
-                  Replies within 1 business day
-                </li>
-                <li className="flex items-center gap-2 text-zinc-700">
-                  <Shield className="h-4 w-4 text-indigo-600" />
-                  Secure & private
-                </li>
-              </ul>
+                <div className="flex items-center gap-2 mb-4">
+                  <a
+                    href="mailto:hello@innstastay.com"
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-white text-sm font-medium shadow hover:shadow-md transition"
+                  >
+                    Send Email
+                  </a>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText('hello@innstastay.com');
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 1500);
+                      } catch (_) {}
+                    }}
+                    className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm hover:shadow-sm transition"
+                  >
+                    <Copy className="h-4 w-4" />
+                    {copied ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+
+                <ul className="space-y-2 text-sm text-zinc-600">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Response within 24 hours
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-blue-600" />
+                    Mon-Fri, 9am-6pm ET
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          {/* Helpful Info / CTA */}
-          <aside className="rounded-2xl border border-zinc-200 bg-white shadow-sm p-6 sm:p-8">
-            <h3 className="text-lg font-semibold text-zinc-900">Helpful links</h3>
-            <ul className="mt-4 space-y-3 text-sm">
-              <li>
-                <a href="/about" className="text-blue-700 hover:underline">
-                  About InnstaStay
+          {/* Partnership Card */}
+          <div className="rounded-2xl border border-zinc-200 bg-gradient-to-br from-purple-50 to-indigo-50 shadow-sm p-6 sm:p-8">
+            <div className="flex items-start gap-4">
+              <div className="shrink-0 rounded-xl bg-purple-100 p-3">
+                <Shield className="h-6 w-6 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-semibold text-zinc-900 mb-2">Hotel Partnerships</h2>
+                <p className="text-zinc-600 mb-4">
+                  Are you a hotel looking to offer direct rates without commissions? Let&apos;s talk.
+                </p>
+
+                <div className="mb-4">
+                  <div className="text-sm font-medium text-zinc-700 mb-2">Partnership inquiries:</div>
+                  <div className="font-mono text-purple-600 bg-white px-3 py-2 rounded-lg">
+                    partners@innstastay.com
+                  </div>
+                </div>
+
+                <a
+                  href="mailto:partners@innstastay.com?subject=Hotel Partnership Inquiry"
+                  className="inline-flex items-center justify-center rounded-xl bg-purple-600 px-6 py-3 text-white font-medium shadow hover:shadow-md transition w-full sm:w-auto"
+                >
+                  Become a Partner
                 </a>
-              </li>
-              <li>
-                <a href="/search" className="text-blue-700 hover:underline">
-                  Browse hotels
-                </a>
-              </li>
-              <li className="text-zinc-600">
-                Looking to partner? Email{' '}
-                <a href={`mailto:${email}`} className="text-blue-700 hover:underline">
-                  {email}
-                </a>
-                .
-              </li>
-            </ul>
-          </aside>
+
+                <div className="mt-4 text-sm text-zinc-600">
+                  <strong>Benefits:</strong> Zero commissions, direct customer relationships, better margins
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

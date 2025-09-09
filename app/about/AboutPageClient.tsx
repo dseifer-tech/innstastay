@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Search, Shield, DollarSign, CheckCircle, Building, Users, Eye, Link, Heart, Zap, TrendingDown, TrendingUp } from 'lucide-react';
-import FAQ from '@/app/components/FAQ';
 import MobileMenu from '@/app/components/MobileMenu';
 import SecondaryCTA from '@/app/components/SecondaryCTA';
 
@@ -185,8 +184,79 @@ export default function AboutPageClient() {
       {/* Secondary CTA */}
       <SecondaryCTA />
 
-      {/* FAQ Section */}
-      <FAQ />
+      {/* FAQ Section - About-specific */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-gray-600">
+              Everything you need to know about booking direct with InnstaStay.
+            </p>
+          </div>
+          
+          <div className="space-y-6">
+            <div className="bg-gray-50 rounded-2xl p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                How is InnstaStay different from other booking sites?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Unlike traditional booking sites that charge hotels 15-25% commission (which gets passed to you), 
+                we show you direct hotel rates with zero markup. You see the hotel&apos;s actual price and book directly with them.
+              </p>
+            </div>
+            
+            <div className="bg-gray-50 rounded-2xl p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Do I actually save money booking direct?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Yes! Hotels often offer their best rates directly to avoid paying commissions to booking sites. 
+                Plus, you&apos;ll earn loyalty points and get better cancellation policies when booking direct.
+              </p>
+            </div>
+            
+            <div className="bg-gray-50 rounded-2xl p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                How do you make money if you don&apos;t charge commissions?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                We partner with select hotels who appreciate our commission-free approach. 
+                Some pay us a small marketing fee, but this never affects the rates you see - they&apos;re always the hotel&apos;s direct price.
+              </p>
+            </div>
+            
+            <div className="bg-gray-50 rounded-2xl p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                What if I need to cancel or change my booking?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Since you book directly with the hotel, you&apos;ll follow their cancellation policy - 
+                which is often more flexible than third-party sites. You&apos;ll also get direct customer service from the hotel.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section - Compare Toronto Hotels */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to save on your Toronto stay?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands who&apos;ve ditched the booking sites and discovered the benefits of booking direct.
+          </p>
+          <a 
+            href="/search" 
+            className="inline-block bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-xl text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+          >
+            Compare Toronto Hotels →
+          </a>
+        </div>
+      </section>
 
       {/* AboutPage Schema */}
       <script

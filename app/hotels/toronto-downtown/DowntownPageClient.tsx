@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Menu } from 'lucide-react';
 import MobileMenu from '@/app/components/MobileMenu';
 import OptimizedImage from '@/app/components/OptimizedImage';
 import { proxify } from '@/lib/img';
@@ -21,6 +20,113 @@ export default function DowntownPageClient() {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Discover the best hotels in downtown Toronto with direct booking and no commission fees.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Neighborhoods Quick Links */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Popular Neighborhoods
+            </h2>
+            <p className="text-gray-600">
+              Find hotels in Toronto&apos;s most sought-after downtown areas
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              'Financial District',
+              'Entertainment District', 
+              'King West',
+              'Yorkville',
+              'Harbourfront',
+              'Distillery District',
+              'Queen West',
+              'St. Lawrence'
+            ].map((neighborhood) => (
+              <a
+                key={neighborhood}
+                href={`/search?neighborhood=${neighborhood.toLowerCase().replace(/\s+/g, '-')}`}
+                className="inline-flex items-center px-4 py-2 rounded-full border border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-colors text-sm font-medium"
+              >
+                {neighborhood}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mini Guide Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Downtown Toronto Guide
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Must-visit attractions and landmarks within walking distance of downtown hotels
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* CN Tower */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-6">
+              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                  <path d="M2 17l10 5 10-5"></path>
+                  <path d="M2 12l10 5 10-5"></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">CN Tower</h3>
+              <p className="text-gray-600 text-center mb-4">
+                Toronto&apos;s iconic 553m tower with observation decks, EdgeWalk experience, and 360 Restaurant.
+              </p>
+              <div className="text-center">
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">
+                  5-10 min walk
+                </span>
+              </div>
+            </div>
+
+            {/* Royal Ontario Museum */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-6">
+              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Royal Ontario Museum</h3>
+              <p className="text-gray-600 text-center mb-4">
+                World-class museum featuring natural history, world cultures, and the famous crystal architecture.
+              </p>
+              <div className="text-center">
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
+                  15-20 min walk
+                </span>
+              </div>
+            </div>
+
+            {/* Harbourfront */}
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M3 12h18m-9 4.5c-4.5 0-8-2.5-8-5.5s3.5-5.5 8-5.5 8 2.5 8 5.5-3.5 5.5-8 5.5z"></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Harbourfront</h3>
+              <p className="text-gray-600 text-center mb-4">
+                Waterfront district with Lake Ontario views, ferry to Toronto Islands, and cultural events.
+              </p>
+              <div className="text-center">
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-cyan-100 text-cyan-800 text-sm font-medium">
+                  10-15 min walk
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
