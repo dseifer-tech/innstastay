@@ -4,6 +4,7 @@
 // Usage: node -r dotenv/config scripts/seed-downtown-and-fragment.js dotenv_config_path=.env.local
 
 const { createClient } = require('@sanity/client')
+const crypto = require('crypto')
 
 const PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
 const DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
@@ -15,7 +16,11 @@ if (!PROJECT_ID || !TOKEN) {
 }
 
 const client = createClient({ projectId: PROJECT_ID, dataset: DATASET, token: TOKEN, apiVersion: '2023-05-03', useCdn: false })
-const pt = (text) => ([{ _type: 'block', style: 'normal', children: [{ _type: 'span', text }] }])
+const pt = (text) => {
+  const key = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2))
+  const childKey = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2))
+  return [{ _key: key, _type: 'block', style: 'normal', children: [{ _key: childKey, _type: 'span', text }] }]
+}
 
 async function upsertFragment() {
   const fragId = 'fragment.trust'
@@ -24,7 +29,7 @@ async function upsertFragment() {
     _type: 'fragment',
     title: 'Trust + Why Book Direct',
     sections: [
-      { _type: 'richText', body: pt('Why Book Direct? — Transparent pricing, flexible cancellation, loyalty benefits, and 0% commission.') },
+      { _key: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2), _type: 'richText', body: pt('Why Book Direct? — Transparent pricing, flexible cancellation, loyalty benefits, and 0% commission.') },
     ],
   }
   await client.createOrReplace(frag)
@@ -39,9 +44,9 @@ async function upsertDowntownPage() {
     title: 'Downtown Toronto Hotels',
     slug: { _type: 'slug', current: 'hotels/toronto-downtown' },
     sections: [
-      { _type: 'hero', headline: 'Downtown Toronto Hotels', subhead: 'Handpicked stays in the core—book direct with the hotel.' },
-      { _type: 'richText', body: pt('Browse popular downtown hotels and points of interest. Prices shown are direct from hotels.') },
-      { _type: 'hotelCarousel', title: 'Downtown picks', hotels: [] },
+      { _key: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2), _type: 'hero', headline: 'Downtown Toronto Hotels', subhead: 'Handpicked stays in the core—book direct with the hotel.' },
+      { _key: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2), _type: 'richText', body: pt('Browse popular downtown hotels and points of interest. Prices shown are direct from hotels.') },
+      { _key: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2), _type: 'hotelCarousel', title: 'Downtown picks', hotels: [] },
     ],
   }
   await client.createOrReplace(doc)

@@ -12,19 +12,64 @@ export async function getPageBySlug(slug: string, opts?: { drafts?: boolean; fet
   const query = `*[_type=="page" && slug.current==$slug][0]{
     title,
     "slug": slug.current,
-    hero,
+    // Ensure hero image includes a url for rendering
+    hero{
+      ...,
+      image{..., "asset": {"url": asset->url}}
+    },
     seo,
     sections[]{
       ...,
+      // Normalize image url for hero sections
+      _type=="hero" => {
+        ...,
+        image{..., "asset": {"url": asset->url}}
+      },
+      // Expand referenced fragments and normalize their inner sections
       _type=="fragmentRef" => {
         "sections": ref->sections[]{
           ...,
-          _type=="hotelCarousel" => { hotels[]-> { _id, name, "slug": slug.current, images } },
-          _type=="poiGrid"       => { pois[]->   { _id, name, image, url, shortDescription } }
+          _type=="hero" => {
+            ...,
+            image{..., "asset": {"url": asset->url}}
+          },
+          _type=="hotelCarousel" => {
+            hotels[]-> {
+              _id,
+              name,
+              "slug": slug.current,
+              images[]{..., "asset": {"url": asset->url}}
+            }
+          },
+          _type=="poiGrid" => {
+            pois[]->{
+              _id,
+              name,
+              image{..., "asset": {"url": asset->url}},
+              url,
+              shortDescription
+            }
+          }
         }
       },
-      _type=="hotelCarousel" => { hotels[]-> { _id, name, "slug": slug.current, images } },
-      _type=="poiGrid"       => { pois[]->   { _id, name, image, url, shortDescription } }
+      // Normalize images for direct sections as well
+      _type=="hotelCarousel" => {
+        hotels[]-> {
+          _id,
+          name,
+          "slug": slug.current,
+          images[]{..., "asset": {"url": asset->url}}
+        }
+      },
+      _type=="poiGrid" => {
+        pois[]->{
+          _id,
+          name,
+          image{..., "asset": {"url": asset->url}},
+          url,
+          shortDescription
+        }
+      }
     },
     _updatedAt
   }`
