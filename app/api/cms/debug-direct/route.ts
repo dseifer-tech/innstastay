@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     perspective: 'published' as any,
   })
 
-  const query = `*[_type=="page" && slug.current==$slug][0]{ _id, _updatedAt, "slug": slug.current, defined(hero) as heroPresent, count(sections) as sectionCount }`
+  const query = `*[_type=="page" && slug.current==$slug][0]{ _id, _updatedAt, "slug": slug.current, "heroPresent": defined(hero), "sectionCount": count(sections) }`
 
   let doc: any = null
   let error: string | undefined
