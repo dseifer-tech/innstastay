@@ -10,8 +10,8 @@ export async function GET(req: Request) {
   const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
   const token = process.env.SANITY_API_TOKEN
 
-  const client = createClient({ projectId, dataset, token, apiVersion: '2023-10-01', useCdn: false })
-  const query = `*[_type=="page" && slug.current==$slug][0]{_id, title, slug, hero, sections, _updatedAt}`
+  const client = createClient({ projectId, dataset, token, apiVersion: '2023-10-01', useCdn: false, perspective: 'published' as any })
+  const query = `*[_type=="page" && slug.current==$slug][0]{ _id, _updatedAt, "slug": slug.current, defined(hero) as heroPresent, count(sections) as sectionCount }`
   let doc: any = null
   let error: string | undefined
   try {
@@ -22,12 +22,13 @@ export async function GET(req: Request) {
 
   return Response.json({
     preview,
-    env: { projectId, dataset, hasToken: !!token },
     slug,
-    exists: !!doc,
-    title: doc?.title || null,
-    _id: doc?._id || null,
-    sectionCount: Array.isArray(doc?.sections) ? doc.sections.length : 0,
+    page: {
+      exists: !!doc,
+      id: doc?._id || null,
+      heroPresent: !!doc?.heroPresent,
+      sectionCount: typeof doc?.sectionCount === 'number' ? doc.sectionCount : 0,
+    },
     error,
   })
 }
