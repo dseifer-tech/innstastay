@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SectionRenderer from '@/app/components/SectionRenderer'
+import { PageRenderer } from '@/app/components/cms/PageRenderer'
 import { draftMode } from 'next/headers'
 import { isCmsPagesEnabled } from '@/lib/cms/flags'
 import { getPageBySlug } from '@/lib/cms/page'
@@ -43,16 +43,9 @@ export default async function AboutPage() {
     drafts: isDraft,
     fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:about'] } },
   })
-  const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
-  const extraSections = sections.filter((s: any) => s?._type !== 'hero')
-  return (
-    <>
-      <AboutPageClient />
-      {extraSections.length > 0 && (
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-          <SectionRenderer sections={extraSections} />
-        </main>
-      )}
-    </>
-  )
+  const sections = page ? page.sections || [] : []
+  if (!page || (!page.hero && !sections.length)) {
+    return <AboutPageClient />
+  }
+  return <PageRenderer hero={page.hero} sections={sections} />
 }
