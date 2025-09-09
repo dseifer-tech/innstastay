@@ -12,9 +12,9 @@ export function getClient() {
     dataset,
     apiVersion,
     useCdn: false,
-    ...(preview
-      ? { token: process.env.SANITY_API_TOKEN, perspective: 'previewDrafts' as any }
-      : { perspective: 'published' as any }),
+    // Always include token server-side to ensure access to private datasets
+    token: process.env.SANITY_API_TOKEN,
+    perspective: (preview ? 'previewDrafts' : 'published') as any,
   })
 }
 
