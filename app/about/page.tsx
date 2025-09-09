@@ -33,6 +33,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
+  // Always render the original client page to preserve design/UX
+  // Append CMS sections (excluding hero) below when available
   if (!isCmsPagesEnabled()) {
     return <AboutPageClient />
   }
@@ -42,12 +44,15 @@ export default async function AboutPage() {
     fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:about'] } },
   })
   const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
-  if (!sections.length) {
-    return <AboutPageClient />
-  }
+  const extraSections = sections.filter((s: any) => s?._type !== 'hero')
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-      <SectionRenderer sections={sections} />
-    </main>
+    <>
+      <AboutPageClient />
+      {extraSections.length > 0 && (
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+          <SectionRenderer sections={extraSections} />
+        </main>
+      )}
+    </>
   )
 }
