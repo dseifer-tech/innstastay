@@ -32,6 +32,28 @@ export function renderSection(section: any): JSX.Element | null {
       const block = { _type: 'faq', title: section?.heading, items }
       return <SectionRenderer sections={[block] as any} />
     }
+    case 'featureGrid': {
+      const items = Array.isArray(section?.items) ? section.items : []
+      return (
+        <div>
+          {(section?.heading || section?.subheading) && (
+            <div className="text-center mb-16">
+              {section?.heading && <h2 className="text-3xl font-bold text-gray-900 mb-6">{section.heading}</h2>}
+              {section?.subheading && <p className="text-xl text-gray-600 max-w-3xl mx-auto">{section.subheading}</p>}
+            </div>
+          )}
+          <div className={`grid gap-8 ${items.length === 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 md:grid-cols-3'}`}>
+            {items.map((it: any, idx: number) => (
+              <div key={idx} className="bg-white rounded-2xl p-8 text-center shadow-sm">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 bg-gray-100"/>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{it?.title}</h3>
+                {it?.description && <p className="text-gray-600 text-sm leading-relaxed">{it.description}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    }
     case 'cta': {
       // Map to secondaryCta used by SectionRenderer
       const primary = Array.isArray(section?.ctas) ? section.ctas[0] : null
