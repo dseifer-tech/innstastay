@@ -31,9 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DowntownPage() {
-  if (!isCmsPagesEnabled()) {
-    return <DowntownPageClient />
-  }
+  if (!isCmsPagesEnabled()) return <DowntownPageClient />
 
   const isDraft = draftMode().isEnabled
   const page = await getPageBySlug('hotels/toronto-downtown', {
@@ -42,9 +40,7 @@ export default async function DowntownPage() {
   })
 
   // Fallback to static client page if CMS page is missing or empty
-  if (!page || (!page.hero && !(page.sections || []).length)) {
-    return <DowntownPageClient />
-  }
+  if (!page || (!page.hero && !(page.sections || []).length)) return <DowntownPageClient />
 
   return <PageRenderer hero={page.hero} sections={page.sections} />
 }
