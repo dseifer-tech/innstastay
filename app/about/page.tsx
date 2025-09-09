@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SectionRenderer from '@/app/components/SectionRenderer'
+import { PageRenderer } from '@/app/components/cms/PageRenderer'
 import { draftMode } from 'next/headers'
 import { isCmsPagesEnabled } from '@/lib/cms/flags'
 import { getPageBySlug } from '@/lib/cms/page'
@@ -33,6 +33,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
+  // Always render the original client page to preserve design/UX
+  // Append CMS sections (excluding hero) below when available
   if (!isCmsPagesEnabled()) {
     return <AboutPageClient />
   }
@@ -41,13 +43,9 @@ export default async function AboutPage() {
     drafts: isDraft,
     fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:about'] } },
   })
-  const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
-  if (!sections.length) {
+  const sections = page ? page.sections || [] : []
+  if (!page || (!page.hero && !sections.length)) {
     return <AboutPageClient />
   }
-  return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-      <SectionRenderer sections={sections} />
-    </main>
-  )
+  return <PageRenderer hero={page.hero} sections={sections} />
 }

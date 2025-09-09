@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SectionRenderer from '@/app/components/SectionRenderer'
+import { PageRenderer } from '@/app/components/cms/PageRenderer'
 import { draftMode } from 'next/headers'
 import { isCmsPagesEnabled } from '@/lib/cms/flags'
 import { getPageBySlug } from '@/lib/cms/page'
@@ -41,13 +41,8 @@ export default async function ContactPage() {
     drafts: isDraft,
     fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:contact'] } },
   })
-  const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
-  if (!sections.length) {
+  if (!page || (!page.hero && !(page.sections || []).length)) {
     return <ContactPageClient />
   }
-  return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-      <SectionRenderer sections={sections} />
-    </main>
-  )
+  return <PageRenderer hero={page.hero} sections={page.sections} />
 }

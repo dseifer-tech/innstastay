@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import DowntownPageClient from "./DowntownPageClient";
 import { isCmsPagesEnabled } from '@/lib/cms/flags'
 import { getPageBySlug } from '@/lib/cms/page'
-import SectionRenderer from '@/app/components/SectionRenderer'
+import { PageRenderer } from '@/app/components/cms/PageRenderer'
 import { buildPageMetadata } from '@/lib/seo'
 import { draftMode } from 'next/headers'
 
@@ -42,14 +42,9 @@ export default async function DowntownPage() {
   })
 
   // Fallback to static client page if CMS page is missing or empty
-  const sections = page ? [page.hero, ...(page.sections || [])].filter(Boolean) : []
-  if (!sections.length) {
+  if (!page || (!page.hero && !(page.sections || []).length)) {
     return <DowntownPageClient />
   }
 
-  return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-      <SectionRenderer sections={sections} />
-    </main>
-  )
+  return <PageRenderer hero={page.hero} sections={page.sections} />
 }
