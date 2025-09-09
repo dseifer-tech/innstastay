@@ -35,17 +35,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   // Always render the original client page to preserve design/UX
   // Append CMS sections (excluding hero) below when available
-  if (!isCmsPagesEnabled()) {
-    return <AboutPageClient />
-  }
+  // CMS pages disabled globally; always render client page
+  if (!isCmsPagesEnabled()) return <AboutPageClient />
   const isDraft = draftMode().isEnabled
   const page = await getPageBySlug('about', {
     drafts: isDraft,
     fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:about'] } },
   })
   const sections = page ? page.sections || [] : []
-  if (!page || (!page.hero && !sections.length)) {
-    return <AboutPageClient />
-  }
+  if (!page || (!page.hero && !sections.length)) return <AboutPageClient />
   return <PageRenderer hero={page.hero} sections={sections} />
 }

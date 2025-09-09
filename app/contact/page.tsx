@@ -33,16 +33,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  if (!isCmsPagesEnabled()) {
-    return <ContactPageClient />
-  }
+  if (!isCmsPagesEnabled()) return <ContactPageClient />
   const isDraft = draftMode().isEnabled
   const page = await getPageBySlug('contact', {
     drafts: isDraft,
     fetchOptions: isDraft ? { cache: 'no-store' } : { next: { revalidate: 3600, tags: ['page:contact'] } },
   })
-  if (!page || (!page.hero && !(page.sections || []).length)) {
-    return <ContactPageClient />
-  }
+  if (!page || (!page.hero && !(page.sections || []).length)) return <ContactPageClient />
   return <PageRenderer hero={page.hero} sections={page.sections} />
 }
