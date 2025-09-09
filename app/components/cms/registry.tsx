@@ -49,6 +49,13 @@ export function renderSection(section: any): JSX.Element | null {
       if (process.env.NODE_ENV !== 'production') {
         console.warn('[CMS] Unknown section type:', section?._type)
       }
+      if (section?.body) {
+        return (
+          <div className="prose max-w-none">
+            <Portable value={section.body} />
+          </div>
+        )
+      }
       return null
     }
   }
