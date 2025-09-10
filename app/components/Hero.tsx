@@ -1,6 +1,6 @@
 "use client";
 
-import OptimizedImage from "./OptimizedImage";
+import Image from "next/image";
 
 type HeroProps = {
   title: string;
@@ -11,31 +11,29 @@ type HeroProps = {
 
 export default function Hero({ title, subtitle, imageSrc, imageAlt }: HeroProps) {
   return (
-    <section id="hero" className="relative min-h-[56vh] w-full">
-      <picture className="absolute inset-0 -z-10">
-        <OptimizedImage
-          src={imageSrc}
-          alt={imageAlt}
-          className="h-full w-full object-cover"
-          width={1920}
-          height={900}
-          priority={true}
-          sizes="100vw"
-        />
-      </picture>
-
-      {/* Overlays for contrast */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-
+    <section className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full">
+      {/* Background Image using Next.js Image with fill */}
+      <Image 
+        src={imageSrc} 
+        alt={imageAlt} 
+        fill 
+        priority 
+        className="object-cover z-0" 
+      />
+      
+      {/* Overlay for contrast */}
+      <div className="absolute inset-0 bg-black/40 z-0" />
+      
       {/* Centered content */}
-      <div className="relative mx-auto flex max-w-5xl flex-col items-center px-4 py-24 text-center sm:py-28 md:py-36">
-        <h1 className="text-4xl font-extrabold tracking-tight text-white drop-shadow sm:text-5xl md:text-6xl">
-          {title}
-        </h1>
-        <p className="mt-4 max-w-3xl text-lg text-white/90 sm:text-xl">
-          {subtitle}
-        </p>
+      <div className="relative z-10 h-full flex items-center justify-center text-center text-white px-4">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">
+            {title}
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+            {subtitle}
+          </p>
+        </div>
       </div>
     </section>
   );
