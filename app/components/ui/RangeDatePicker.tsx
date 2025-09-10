@@ -66,7 +66,10 @@ export default function RangeDatePicker({
             )}
             aria-label="Choose check-in and check-out dates"
           >
-            {labelText}
+            <span className="block">{labelText}</span>
+            <span className="text-xs text-gray-500 block mt-1">
+              DEBUG: from={range?.from?.toDateString() || 'none'}, to={range?.to?.toDateString() || 'none'}
+            </span>
           </Popover.Button>
 
           <Transition
@@ -82,18 +85,13 @@ export default function RangeDatePicker({
                 <DayPicker
                   mode="range"
                   selected={range}
-                  onSelect={(r) => {
-                    if (!r?.from) {
-                      setRange({ from: undefined, to: undefined });
-                      return;
-                    }
-                    // If user clicks a single day twice, set a 1-night default
-                    if (r?.from && r?.to && isAfter(r.to, r.from)) {
-                      setRange(r);
-                      // defer close slightly for good UX
-                      setTimeout(() => close(), 80);
-                    } else if (r?.from && !r?.to) {
-                      setRange({ from: r.from, to: addDays(r.from, 1) });
+                  onSelect={(newRange) => {
+                    console.log('Date picker selection:', newRange);
+                    setRange(newRange);
+                    
+                    // Auto-close when both dates are selected
+                    if (newRange?.from && newRange?.to) {
+                      setTimeout(() => close(), 200);
                     }
                   }}
                   numberOfMonths={months}
