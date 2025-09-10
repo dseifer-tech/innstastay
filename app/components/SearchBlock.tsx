@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/app/components/ui/Button';
 
 export default function SearchBlock() {
   const [checkin, setCheckin] = useState('');
