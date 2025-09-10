@@ -3,9 +3,18 @@ import { createClient } from '@sanity/client'
 import { validateHotelData, validateRequestBody, sanitizeError } from '@/lib/security'
 import { log } from '@/lib/core/log'
 
+// Normalize project ID to handle dummy values in CI/build environments
+const normalizeProjectId = (projectId: string | undefined): string => {
+  if (!projectId) return 'dummy-project-id';
+  if (projectId.startsWith('dummy')) {
+    return projectId.replace(/_/g, '-');
+  }
+  return projectId;
+};
+
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  projectId: normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID),
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2024-01-01',
   token: process.env.SANITY_API_TOKEN,
   useCdn: false,

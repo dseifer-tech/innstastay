@@ -1,8 +1,17 @@
 import { createClient } from 'next-sanity'
 import { draftMode } from 'next/headers'
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
+// Normalize project ID to handle dummy values in CI/build environments
+const normalizeProjectId = (projectId: string | undefined): string => {
+  if (!projectId) return 'dummy-project-id';
+  if (projectId.startsWith('dummy')) {
+    return projectId.replace(/_/g, '-');
+  }
+  return projectId;
+};
+
+const projectId = normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 const apiVersion = '2023-10-01'
 
 export function getClient() {

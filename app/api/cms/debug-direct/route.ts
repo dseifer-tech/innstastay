@@ -6,7 +6,16 @@ export async function GET(req: Request) {
   const slug = url.searchParams.get('slug') || 'about'
   const preview = draftMode().isEnabled
 
-  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
+  // Normalize project ID to handle dummy values in CI/build environments
+  const normalizeProjectId = (projectId: string | undefined): string => {
+    if (!projectId) return 'dummy-project-id';
+    if (projectId.startsWith('dummy')) {
+      return projectId.replace(/_/g, '-');
+    }
+    return projectId;
+  };
+  
+  const projectId = normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
   const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
   const token = process.env.SANITY_API_TOKEN
 
