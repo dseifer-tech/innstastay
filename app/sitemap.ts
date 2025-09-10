@@ -1,37 +1,40 @@
 import { MetadataRoute } from 'next'
 import { getHotelsForSearch } from '@/lib/hotelSource'
-import { getAllPageSlugs } from '@/lib/cms/page'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.innstastay.com'
   
-  // Get all hotels
-  const hotels = await getHotelsForSearch()
-  // Get CMS pages
-  const pages = await getAllPageSlugs().catch(() => []) as any[]
-  
-  // Generate hotel URLs
-  const hotelUrls = hotels.map((hotel) => ({
-    url: `${baseUrl}/hotels/${hotel.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }))
-  // Generate CMS page URLs
-  const pageUrls = (pages || []).map((p: any) => ({
-    url: `${baseUrl}/${p.slug}`,
-    lastModified: p._updatedAt ? new Date(p._updatedAt) : new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.6
-  }))
-  
-  // Static pages
+  // Static marketing pages
   const staticPages = [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/hotels/toronto-downtown`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/search`,
@@ -41,5 +44,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
   
-  return [...staticPages, ...pageUrls, ...hotelUrls]
+  // Hotels-only: Get hotels if not in CI skip mode
+  if (process.env.SKIP_SANITY === '1') {
+    return staticPages
+  }
+  
+  try {
+    const hotels = await getHotelsForSearch()
+    const hotelUrls = hotels.map((hotel) => ({
+      url: `${baseUrl}/hotels/${hotel.id}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }))
+    
+    return [...staticPages, ...hotelUrls]
+  } catch (error) {
+    console.warn('Sitemap: Failed to fetch hotels, returning static pages only:', error)
+    return staticPages
+  }
 }

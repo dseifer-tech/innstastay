@@ -10,11 +10,6 @@ export default function SearchBlock() {
   const [neighborhood, setNeighborhood] = useState('');
 
   const handleSearch = () => {
-    console.log('Search button clicked!'); // Debug log
-    console.log('Current dates:', dates); // Debug log
-    console.log('Current guests:', guests); // Debug log
-    console.log('Current neighborhood:', neighborhood); // Debug log
-    
     try {
       const q = new URLSearchParams({ 
         city: 'toronto', 
@@ -25,17 +20,14 @@ export default function SearchBlock() {
       });
       
       const searchUrl = `/search?${q.toString()}`;
-      console.log('Navigating to:', searchUrl); // Debug log
-      
-      // Try Next.js router first, fallback to window.location
-      try {
-        router.push(searchUrl);
-      } catch (routerError) {
-        console.warn('Router navigation failed, using window.location:', routerError);
-        window.location.href = searchUrl;
-      }
+      router.push(searchUrl);
     } catch (error) {
       console.error('Search error:', error);
+      // Fallback to window.location
+      window.location.href = `/search?${new URLSearchParams({ 
+        city: 'toronto', 
+        guests: String(guests) 
+      }).toString()}`;
     }
   };
 
@@ -43,12 +35,6 @@ export default function SearchBlock() {
     <section className="bg-white">
       <div className="container mx-auto px-4 mt-6 md:mt-8">
         <div className="rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-4 md:p-5">
-          {/* Test Link for debugging */}
-          <div className="mb-4 text-center">
-            <a href="/search?city=toronto&guests=2" className="text-blue-600 underline text-sm">
-              🔍 Test Search Link (Debug)
-            </a>
-          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <input 
               className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" 

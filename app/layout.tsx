@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import Script from 'next/script'
-import { getSiteSettings } from '@/lib/cms/settings'
 
 import PageViewTracker from './components/PageViewTracker'
 import OptimizedImage from './components/OptimizedImage'
@@ -60,13 +59,12 @@ export const viewport = {
   themeColor: '#1F60C4',
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const settings = await getSiteSettings()
-  const gtmId = settings?.gtmId || 'GTM-XXXXXXX'
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-XXXXXXX'
   return (
     <html lang="en">
                    <head>

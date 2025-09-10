@@ -1,17 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { checkRateLimit, validateOrigin, SECURITY_HEADERS } from './lib/security'
-import { getRedirectsCached } from './lib/cms/redirects'
 
 export async function middleware(request: NextRequest) {
-  const url = request.nextUrl
-  // Redirects (Sanity-managed)
-  const redirects = await getRedirectsCached()
-  const hit = redirects.find(r => r.fromPath === url.pathname)
-  if (hit) {
-    const to = new URL(hit.toPath, url)
-    return NextResponse.redirect(to, hit.status)
-  }
   const response = NextResponse.next()
 
   // Security: Add security headers to all responses
