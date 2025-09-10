@@ -28,7 +28,6 @@ export default function RangeDatePicker({
     value ?? { from: undefined, to: undefined }
   );
   const [months, setMonths] = useState(2);
-  const [isSelecting, setIsSelecting] = useState(false); // Track if we're in selection mode
 
   useEffect(() => {
     // Responsive months (1 on small screens)
@@ -65,9 +64,7 @@ export default function RangeDatePicker({
             )}
             aria-label="Choose check-in and check-out dates"
             onClick={() => {
-              // Reset selection state when opening
-              setIsSelecting(true);
-              console.log('Opening date picker - ready for fresh selection');
+              console.log('Opening date picker');
             }}
           >
             {labelText}
@@ -85,41 +82,30 @@ export default function RangeDatePicker({
               <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-xl">
                 <DayPicker
                   mode="range"
-                  selected={isSelecting ? undefined : range} // Clear visual selection when starting fresh
+                  selected={range}
                   onSelect={(newRange) => {
-                    console.log('Date picker selection:', newRange, 'isSelecting:', isSelecting);
+                    console.log('Date picker selection:', newRange);
                     
                     if (!newRange?.from) {
                       // Clear selection
                       setRange({ from: undefined, to: undefined });
-                      setIsSelecting(false);
                       return;
                     }
 
-                    // If we're starting a fresh selection or only have a from date
-                    if (isSelecting || !newRange?.to) {
-                      // First click or incomplete range - just set what we have
-                      if (newRange?.from && newRange?.to && 
-                          newRange.from.getTime() === newRange.to.getTime()) {
-                        // Same date clicked - only set from
-                        setRange({ from: newRange.from, to: undefined });
-                      } else {
-                        setRange(newRange);
-                      }
-                      
-                      // If we have both dates, we're done selecting
-                      if (newRange?.from && newRange?.to && 
-                          newRange.from.getTime() !== newRange.to.getTime()) {
-                        setIsSelecting(false);
-                        setTimeout(() => close(), 300);
-                      }
-                    } else {
-                      // We have a complete range, set it
-                      setRange(newRange);
-                      setIsSelecting(false);
-                      if (newRange?.from && newRange?.to) {
-                        setTimeout(() => close(), 300);
-                      }
+                    // Handle same date selection (prevent same check-in/check-out)
+                    if (newRange?.from && newRange?.to && 
+                        newRange.from.getTime() === newRange.to.getTime()) {
+                      setRange({ from: newRange.from, to: undefined });
+                      return;
+                    }
+
+                    // Set the range as provided by DayPicker
+                    setRange(newRange);
+                    
+                    // Auto-close when we have both different dates
+                    if (newRange?.from && newRange?.to && 
+                        newRange.from.getTime() !== newRange.to.getTime()) {
+                      setTimeout(() => close(), 300);
                     }
                   }}
                   numberOfMonths={months}
@@ -132,8 +118,7 @@ export default function RangeDatePicker({
                     className="text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-1 rounded-lg transition-colors"
                     onClick={() => {
                       setRange({ from: undefined, to: undefined });
-                      setIsSelecting(true); // Ready for fresh selection
-                      console.log('Date range cleared - ready for fresh selection');
+                      console.log('Date range cleared');
                     }}
                   >
                     Clear dates
