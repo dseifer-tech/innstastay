@@ -19,9 +19,9 @@ export default function SearchBlock() {
   };
 
   return (
-    <section className="bg-white">
-      <div className="container mx-auto px-4 -mt-10 md:-mt-16">
-        <div className="mx-auto max-w-5xl rounded-2xl shadow-xl border p-4 md:p-6">
+    <section className="relative z-20 -mt-4 md:-mt-6">
+      <div className="mx-auto max-w-5xl px-4">
+        <div className="rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-4 md:p-5">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <input 
               className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" 

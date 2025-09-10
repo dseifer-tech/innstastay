@@ -11,29 +11,23 @@ type HeroProps = {
 
 export default function Hero({ title, subtitle, imageSrc, imageAlt }: HeroProps) {
   return (
-    <section className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full">
-      {/* Background Image using Next.js Image with fill */}
+    <section className="relative isolate overflow-hidden w-full min-h-[520px] md:min-h-[640px]">
       <Image 
         src={imageSrc} 
         alt={imageAlt} 
         fill 
         priority 
-        className="object-cover z-0" 
+        className="object-cover -z-10" 
       />
-      
-      {/* Overlay for contrast */}
-      <div className="absolute inset-0 bg-black/40 z-0" />
-      
-      {/* Centered content */}
-      <div className="relative z-10 h-full flex items-center justify-center text-center text-white px-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">
-            {title}
-          </h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-            {subtitle}
-          </p>
-        </div>
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/40 via-black/20 to-black/10" />
+
+      <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 py-20 md:py-28 text-center text-white">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-md">
+          {title}
+        </h1>
+        <p className="mt-4 md:mt-6 text-base sm:text-lg md:text-xl/relaxed opacity-90">
+          {subtitle}
+        </p>
       </div>
     </section>
   );
