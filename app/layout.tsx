@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 
 import OptimizedImage from './components/OptimizedImage'
 import Navigation from './components/Navigation'
+import ThemeBackground from './components/ThemeBackground'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -96,6 +97,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/innstastay-logo.svg" />
       </head>
       <body className={inter.className}>
+        {/* Subtle background gradient */}
+        <ThemeBackground />
+        
         {/* Navigation - Available on all pages */}
         <Navigation />
 

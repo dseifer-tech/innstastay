@@ -7,6 +7,7 @@ import Hero from './components/Hero';
 import HotelCard from './components/hotel/HotelCard';
 import FAQ from './components/FAQ';
 import DirectBenefits from './components/DirectBenefits';
+import DirectBookingPromise from './components/DirectBookingPromise';
 import type { Hotel } from '@/types/hotel';
 import { log } from '@/lib/core/log';
 
@@ -79,39 +80,8 @@ export default function HomePageClient() {
         <div className="h-4 sm:h-6" />
         <DirectBenefits />
 
-        {/* TRANSPARENCY BANNER: Best Price Promise */}
-        <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center">
-                  <Shield className="w-10 h-10 text-white" />
-                </div>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Best Price Promise
-              </h2>
-              <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-8 leading-relaxed">
-                Find a lower rate elsewhere? We&apos;ll match it and give you $50 credit. 
-                That&apos;s how confident we are in our direct rates.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                <div className="text-center">
-                  <div className="text-3xl font-bold mb-2">0%</div>
-                  <div className="text-blue-100">Commission</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold mb-2">$0</div>
-                  <div className="text-blue-100">Booking Fees</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold mb-2">100%</div>
-                  <div className="text-blue-100">Transparent</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* DIRECT BOOKING PROMISE: Safer messaging without price matching */}
+        <DirectBookingPromise />
 
         {/* HOTEL DIRECTORY: Featured downtown properties */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">

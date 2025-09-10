@@ -31,7 +31,7 @@ export default function SearchBlock() {
   }
 
   return (
-    <section className="mt-6 md:mt-8 bg-gradient-to-r from-[#eef5ff] to-white/60 py-3">
+    <section className="section-tint mt-6 md:mt-8 py-3">
       <div className="mx-auto max-w-5xl px-4">
         <form
           className="rounded-[20px] bg-white/90 supports-[backdrop-filter]:backdrop-blur border border-black/5 shadow-[0_8px_30px_rgba(0,0,0,.06)] p-4 md:p-5 focus-within:ring-2 focus-within:ring-blue-600"
