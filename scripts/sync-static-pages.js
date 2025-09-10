@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-// Sync About, Contact, Privacy page docs in Sanity to match current site copy
-// Usage: node -r dotenv/config scripts/sync-static-pages.js dotenv_config_path=.env.local
+// ⚠️ DEPRECATED: This script is no longer needed as marketing pages are now static React components
+// Pages (About, Contact, Privacy) are coded directly in app/ directory and don't use CMS
+// 
+// Legacy usage: node -r dotenv/config scripts/sync-static-pages.js dotenv_config_path=.env.local
 
 const { createClient } = require('@sanity/client')
 const crypto = require('crypto')

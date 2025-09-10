@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-// Download external imageUrl for each POI, upload to Sanity asset, and set the image field
-// Usage: node -r dotenv/config scripts/backfill-poi-images.js dotenv_config_path=.env.local
+// ⚠️ DEPRECATED: POI (Points of Interest) system has been removed from the CMS
+// This script is no longer functional as POI schemas have been deleted
+//
+// Legacy usage: node -r dotenv/config scripts/backfill-poi-images.js dotenv_config_path=.env.local
 
 const { createClient } = require('@sanity/client')
 const fetch = require('node-fetch')

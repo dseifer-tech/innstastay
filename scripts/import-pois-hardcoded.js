@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-// Import a hardcoded set of POIs (matching current site content) into Sanity
-// Usage: node -r dotenv/config scripts/import-pois-hardcoded.js dotenv_config_path=.env.local
+// ⚠️ DEPRECATED: POI (Points of Interest) system has been removed from the CMS
+// Hotel POI data is now handled differently or removed entirely
+//
+// Legacy usage: node -r dotenv/config scripts/import-pois-hardcoded.js dotenv_config_path=.env.local
 
 const { createClient } = require('@sanity/client')
 

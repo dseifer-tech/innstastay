@@ -178,12 +178,6 @@ export default defineType({
       }]
     }),
     defineField({
-      name: 'poiRefs',
-      title: 'Points of Interest',
-      type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'poi' }] }]
-    }),
-    defineField({
       name: 'isActive',
       title: 'Active',
       type: 'boolean',

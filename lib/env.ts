@@ -3,6 +3,12 @@ import { log } from '@/lib/core/log';
 
 export function validateEnv() {
   const required = {
+    // Sanity CMS (required for hotel data)
+    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
+    SANITY_API_TOKEN: process.env.SANITY_API_TOKEN,
+    
+    // External services
     SERPAPI_KEY: process.env.SERPAPI_KEY,
     NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
   };
@@ -16,6 +22,9 @@ export function validateEnv() {
     if (process.env.NODE_ENV === 'development') {
       log.env.warn(`Missing environment variables (optional in development): ${missing.join(', ')}`);
       return {
+        NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || null,
+        NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+        SANITY_API_TOKEN: process.env.SANITY_API_TOKEN || null,
         SERPAPI_KEY: process.env.SERPAPI_KEY || null,
         NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID || null,
       };

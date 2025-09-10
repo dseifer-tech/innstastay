@@ -10,7 +10,6 @@ export default {
     { name: 'intro', type: 'text', title: 'Intro' },
     { name: 'images', type: 'array', of: [{ type: 'image', options: { hotspot: true } }], title: 'Images' },
     { name: 'hotelRefs', type: 'array', of: [{ type: 'reference', to: [{ type: 'hotel' }] }], title: 'Hotels' },
-    { name: 'poiRefs', type: 'array', of: [{ type: 'reference', to: [{ type: 'poi' }] }], title: 'Points of Interest' },
     { name: 'seo', type: 'seo', title: 'SEO' }
   ]
 } as const

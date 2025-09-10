@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@sanity/client'
 import { log } from '@/lib/core/log'
+import { hotelCreateSchema } from '@/lib/validations/hotel'
+import { validateRequestBody } from '@/lib/security'
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
@@ -14,48 +16,51 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validate required fields
-    const requiredFields = ['name', 'slug', 'description', 'address', 'city']
-    for (const field of requiredFields) {
-      if (!body[field]) {
-        return NextResponse.json({
-          success: false,
-          error: `Missing required field: ${field}`
-        }, { status: 400 })
-      }
+    // Validate request body structure
+    const bodyValidation = validateRequestBody(body)
+    if (!bodyValidation.valid) {
+      return NextResponse.json({
+        success: false,
+        error: bodyValidation.error
+      }, { status: 400 })
     }
+    
+    // Validate hotel data with Zod schema
+    const validationResult = hotelCreateSchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json({
+        success: false,
+        error: 'Validation failed',
+        details: validationResult.error.errors
+      }, { status: 400 })
+    }
+    
+    const validatedData = validationResult.data
 
-    // Create the hotel document
+    // Create the hotel document using validated data
     const hotelDoc = {
       _type: 'hotel',
-      name: body.name,
+      name: validatedData.name,
       slug: {
         _type: 'slug',
-        current: body.slug
+        current: validatedData.slug
       },
-      description: body.description,
-      address: body.address,
-      city: body.city,
-      area: body.area || '',
-      phone: body.phone || '',
-      rating: body.rating || 0,
-      hotelClass: body.hotelClass || 3,
-      amenities: body.amenities || [],
-      tags: body.tags || [],
-      seoTitle: body.seoTitle || `${body.name} - InnstaStay`,
-      seoDescription: body.seoDescription || body.description,
+      description: validatedData.description,
+      address: validatedData.address,
+      city: validatedData.city,
+      area: validatedData.area || '',
+      phone: validatedData.phone || '',
+      rating: validatedData.rating || 0,
+      hotelClass: validatedData.hotelClass || 3,
+      amenities: validatedData.amenities || [],
+      tags: validatedData.tags || [],
+      seoTitle: validatedData.seoTitle || `${validatedData.name} - InnstaStay`,
+      seoDescription: validatedData.seoDescription || validatedData.description,
       isActive: true,
-      primaryImage: body.primaryImageUrl ? {
-        _type: 'image',
-        asset: {
-          _type: 'reference',
-          _ref: body.primaryImageUrl
-        }
-      } : undefined,
-      primaryImageUrl: body.primaryImageUrl || '',
+      primaryImageUrl: validatedData.primaryImageUrl || '',
       bookingLinks: [],
-      token: '', // This will be set later when pricing is configured
-      officialBookingUrl: ''
+      token: validatedData.token || '', // This will be set later when pricing is configured
+      bookingTemplate: validatedData.bookingTemplate || ''
     }
 
     // Create the hotel in Sanity
@@ -64,7 +69,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       hotel: result,
-      message: `Successfully created hotel: ${body.name}`
+      message: `Successfully created hotel: ${validatedData.name}`
     })
 
   } catch (error) {
