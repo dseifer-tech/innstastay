@@ -16,19 +16,29 @@ export default function SearchBlock() {
   const [loading, setLoading] = useState(false);
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
-    console.log('🔍 Form submission:', { checkin, checkout, adults });
+    // Don't prevent default - let browser submit naturally
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     
-    // Debug: create the URL manually to see what it should be
-    const formData = new FormData(e.currentTarget);
+    console.log('🔍 Form data entries:');
+    for (const [key, value] of formData.entries()) {
+      console.log(`  ${key}: ${value}`);
+    }
+    
+    // Build URL manually and navigate as backup
     const params = new URLSearchParams();
     for (const [key, value] of formData.entries()) {
-      params.append(key, value.toString());
+      if (value) { // Only add non-empty values
+        params.append(key, value.toString());
+      }
     }
-    const expectedUrl = `/search?${params.toString()}`;
-    console.log('🌐 Expected URL:', expectedUrl);
+    const manualUrl = `/search?${params.toString()}`;
+    console.log('🌐 Manual URL:', manualUrl);
     
+    // Prevent default and navigate manually since form submission seems broken
+    e.preventDefault();
     setLoading(true);
-    // let the browser do a normal GET submit to /search
+    window.location.href = manualUrl;
   }
 
   return (
