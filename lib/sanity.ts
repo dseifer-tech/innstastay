@@ -58,38 +58,21 @@ export const client = shouldSkipSanity()
       // Removed token temporarily to test if that's causing the issue
     });
 
-const builder = shouldSkipSanity() ? null : imageUrlBuilder(client)
+// Pull envs; use a harmless dummy config if we are skipping Sanity (CI) or envs are fake.
+const RAW_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
+const RAW_DATASET    = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
+const SKIP           = process.env.SKIP_SANITY === '1'
+
+const useDummy  = SKIP || !RAW_PROJECT_ID || RAW_PROJECT_ID === 'dummy-project-id' || !RAW_DATASET
+const projectId = useDummy ? 'dummy'      : (RAW_PROJECT_ID as string)
+const dataset   = useDummy ? 'production' : RAW_DATASET
+
+// Build a stable builder from config (NOT from client)
+const _imgBuilder = imageUrlBuilder({ projectId, dataset })
 
 export function urlFor(source: any) {
-  if (shouldSkipSanity()) {
-    // Create a mock ImageUrlBuilder with all the methods needed
-    const mockBuilder = {
-      url: () => '/placeholder-image.jpg',
-      auto: () => mockBuilder,
-      width: () => mockBuilder,
-      height: () => mockBuilder,
-      fit: () => mockBuilder,
-      crop: () => mockBuilder,
-      quality: () => mockBuilder,
-      format: () => mockBuilder,
-      dpr: () => mockBuilder,
-      blur: () => mockBuilder,
-      sharpen: () => mockBuilder,
-      rect: () => mockBuilder,
-      focalPoint: () => mockBuilder,
-      flipHorizontal: () => mockBuilder,
-      flipVertical: () => mockBuilder,
-      invert: () => mockBuilder,
-      orientation: () => mockBuilder,
-      pad: () => mockBuilder,
-      bg: () => mockBuilder,
-      saturation: () => mockBuilder,
-      hue: () => mockBuilder,
-      lightness: () => mockBuilder
-    };
-    return mockBuilder;
-  }
-  return builder!.image(source)
+  // Always return a chainable builder, even in dummy mode
+  return _imgBuilder.image(source)
 }
 
 // Get all hotels with complete data
