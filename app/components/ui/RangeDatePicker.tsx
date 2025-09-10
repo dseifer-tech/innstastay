@@ -29,6 +29,7 @@ export default function RangeDatePicker({
     value ?? { from: undefined, to: undefined }
   );
   const [months, setMonths] = useState(2);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // Responsive months (1 on small screens)
@@ -55,7 +56,15 @@ export default function RangeDatePicker({
 
   return (
     <Popover className="relative">
-      {({ close }) => (
+      {({ open, close }) => {
+        // Track when the popover opens to reset selection
+        if (open && !isOpen) {
+          setIsOpen(true);
+        } else if (!open && isOpen) {
+          setIsOpen(false);
+        }
+        
+        return (
         <>
           <Popover.Button
             className={clsx(
@@ -85,7 +94,7 @@ export default function RangeDatePicker({
               <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl">
                 <DayPicker
                   mode="range"
-                  selected={range}
+                  selected={open ? undefined : range}
                   onSelect={(newRange) => {
                     console.log('Date picker selection:', newRange);
                     
@@ -143,7 +152,8 @@ export default function RangeDatePicker({
             </Popover.Panel>
           </Transition>
         </>
-      )}
+        );
+      }}
     </Popover>
   );
 }
