@@ -16,29 +16,21 @@ export default function SearchBlock() {
   const [loading, setLoading] = useState(false);
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
-    // Don't prevent default - let browser submit naturally
-    const form = e.currentTarget;
-    const formData = new FormData(form);
+    e.preventDefault();
+    setLoading(true);
     
-    console.log('🔍 Form data entries:');
-    for (const [key, value] of formData.entries()) {
-      console.log(`  ${key}: ${value}`);
-    }
-    
-    // Build URL manually and navigate as backup
+    // Extract form data and build search URL
+    const formData = new FormData(e.currentTarget);
     const params = new URLSearchParams();
+    
     for (const [key, value] of formData.entries()) {
       if (value) { // Only add non-empty values
         params.append(key, value.toString());
       }
     }
-    const manualUrl = `/search?${params.toString()}`;
-    console.log('🌐 Manual URL:', manualUrl);
     
-    // Prevent default and navigate manually since form submission seems broken
-    e.preventDefault();
-    setLoading(true);
-    window.location.href = manualUrl;
+    // Navigate to search with all parameters
+    window.location.href = `/search?${params.toString()}`;
   }
 
   return (
@@ -51,10 +43,6 @@ export default function SearchBlock() {
           onSubmit={onSubmit}
           aria-busy={loading}
         >
-          {/* Debug display */}
-          <div className="mb-3 text-xs text-gray-500 bg-gray-50 p-2 rounded">
-            DEBUG: checkin={checkin}, checkout={checkout}, adults={adults}
-          </div>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <input
               type="date"
