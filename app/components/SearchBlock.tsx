@@ -10,6 +10,11 @@ export default function SearchBlock() {
   const [neighborhood, setNeighborhood] = useState('');
 
   const handleSearch = () => {
+    console.log('🔍 Search button clicked!');
+    console.log('📅 Dates:', dates);
+    console.log('👥 Guests:', guests);
+    console.log('📍 Neighborhood:', neighborhood);
+    
     try {
       const q = new URLSearchParams({ 
         city: 'toronto',
@@ -22,10 +27,18 @@ export default function SearchBlock() {
       });
       
       const searchUrl = `/search?${q.toString()}`;
+      console.log('🌐 Navigation URL:', searchUrl);
+      
       router.push(searchUrl);
       
+      // Also try window.location as backup
+      setTimeout(() => {
+        console.log('🔄 Using window.location fallback');
+        window.location.href = searchUrl;
+      }, 1000);
+      
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('❌ Search error:', error);
       // Fallback to window.location
       const fallbackUrl = `/search?${new URLSearchParams({ 
         city: 'toronto', 
@@ -33,6 +46,7 @@ export default function SearchBlock() {
         children: '0',
         rooms: '1'
       }).toString()}`;
+      console.log('🚨 Using fallback URL:', fallbackUrl);
       window.location.href = fallbackUrl;
     }
   };

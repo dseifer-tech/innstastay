@@ -73,7 +73,11 @@ export async function fetchOfficialFeatured({
   children?: number;
   rooms?: number;
 }): Promise<OfficialFeaturedData> {
+  console.log(`\n🔍 SERPAPI DEBUG: Fetching rates for token "${token}"`);
+  console.log(`📅 ${checkIn} → ${checkOut} | ${adults} adults, ${children} children, ${rooms} rooms`);
+  
   if (!token || !checkIn || !checkOut) {
+    console.log(`❌ Missing required params: token=${!!token}, checkIn=${!!checkIn}, checkOut=${!!checkOut}`);
     return {};
   }
 
@@ -87,16 +91,21 @@ export async function fetchOfficialFeatured({
     
     const serpApiUrl = `https://serpapi.com/search.json?engine=google_hotels&q=toronto%20hotels&property_token=${token}&check_in_date=${checkIn}&check_out_date=${checkOut}&adults=${adults}&currency=CAD&gl=ca&hl=en&api_key=${serpApiKey}`;
     
+    console.log(`🌐 SerpAPI URL: ${serpApiUrl}`);
+    
     const res = await fetchWithRetry(serpApiUrl);
     
     if (!res.ok) {
+      console.log(`❌ SerpAPI failed with status: ${res.status}`);
       log.price.warn('SerpAPI failed with status:', res.status);
       return {};
     }
 
     const data = await res.json();
+    console.log(`📊 SerpAPI Response:`, JSON.stringify(data, null, 2));
     
     if (data.error) {
+      console.log(`❌ SerpAPI error:`, data.error);
       log.price.warn('SerpAPI returned error:', data.error);
       return {};
     }
@@ -205,8 +214,10 @@ export async function fetchOfficialFeatured({
       }
     }
 
+    console.log(`✅ Final result for token "${token}":`, result);
     return result;
   } catch (error) {
+    console.log(`❌ Error fetching rates for token "${token}":`, error);
     log.price.error('Error fetching official featured data:', error);
     return {};
   }
