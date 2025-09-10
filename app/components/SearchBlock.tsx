@@ -17,6 +17,16 @@ export default function SearchBlock() {
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     console.log('🔍 Form submission:', { checkin, checkout, adults });
+    
+    // Debug: create the URL manually to see what it should be
+    const formData = new FormData(e.currentTarget);
+    const params = new URLSearchParams();
+    for (const [key, value] of formData.entries()) {
+      params.append(key, value.toString());
+    }
+    const expectedUrl = `/search?${params.toString()}`;
+    console.log('🌐 Expected URL:', expectedUrl);
+    
     setLoading(true);
     // let the browser do a normal GET submit to /search
   }
@@ -31,6 +41,10 @@ export default function SearchBlock() {
           onSubmit={onSubmit}
           aria-busy={loading}
         >
+          {/* Debug display */}
+          <div className="mb-3 text-xs text-gray-500 bg-gray-50 p-2 rounded">
+            DEBUG: checkin={checkin}, checkout={checkout}, adults={adults}
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <input
               type="date"
