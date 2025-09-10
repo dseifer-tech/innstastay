@@ -66,17 +66,25 @@ function buildFilteredFacets(hotels: Hotel[], selectedAmenities: string[]): Arra
 }
 
 export default async function SearchPage({ searchParams }: { searchParams: Record<string, string | undefined> }) {
+  console.log('🔍 SearchPage LOADED! Raw params:', searchParams);
+  
   const normalizedParams = normalizeSearchParams({ searchParams });
+  console.log('🔧 Normalized params:', normalizedParams);
+  
   const allHotels = await getHotelsForSearch(normalizedParams);
+  console.log('🏨 Hotels fetched:', allHotels.length);
   
   // Get selected amenities from URL
   const selectedAmenities = searchParams.amenities?.split(',').filter(Boolean) || [];
+  console.log('🎯 Selected amenities:', selectedAmenities);
   
   // Filter hotels by selected amenities
   const filteredHotels = filterHotelsByAmenities(allHotels, selectedAmenities);
+  console.log('✅ Filtered hotels:', filteredHotels.length);
   
   // Build facets for the filtered results
   const facets = buildFilteredFacets(allHotels, selectedAmenities);
+  console.log('📊 Facets built:', facets.length);
 
   return (
     <div className="min-h-screen bg-gray-50">

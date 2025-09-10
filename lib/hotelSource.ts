@@ -76,16 +76,23 @@ export async function getHotelBySlug(
 export async function getHotelsForSearch(
   opts?: { checkIn?: string; checkOut?: string; adults?: number; children?: number; rooms?: number }
 ): Promise<Hotel[]> {
-  const docs = await sanityClient.fetch(HOTELS_FOR_SEARCH);
-  const hotels: Hotel[] = docs.map((d: any) => {
-    const h = fromSanityHotel(d);
-    h.officialBookingUrl = buildBookingUrl(h, opts);
-    return h;
-  });
+  console.log('🏨 getHotelsForSearch called with opts:', opts);
   
-  // Optional headline price enrichment with concurrency limit
-  if (opts?.checkIn && opts?.checkOut) {
-    const hotelsWithTokens = hotels.filter(h => h.token);
+  try {
+    const docs = await sanityClient.fetch(HOTELS_FOR_SEARCH);
+    console.log('📄 Sanity docs fetched:', docs ? docs.length : 'null/undefined');
+    
+    const hotels: Hotel[] = docs.map((d: any) => {
+      const h = fromSanityHotel(d);
+      h.officialBookingUrl = buildBookingUrl(h, opts);
+      return h;
+    });
+    
+    console.log('🏨 Hotels mapped:', hotels.length);
+    
+    // Optional headline price enrichment with concurrency limit
+    if (opts?.checkIn && opts?.checkOut) {
+      const hotelsWithTokens = hotels.filter(h => h.token);
     
     if (hotelsWithTokens.length > 0) {
       try {
@@ -126,5 +133,9 @@ export async function getHotelsForSearch(
     }
   }
 
-  return hotels;
+    return hotels;
+  } catch (error) {
+    console.error('❌ Error in getHotelsForSearch:', error);
+    return [];
+  }
 }
