@@ -14,7 +14,32 @@ const builder = shouldSkipSanity() ? null : createImageUrlBuilder(sanityClient);
 
 export const urlFor = (src: any) => {
   if (shouldSkipSanity()) {
-    return { url: () => '/placeholder-image.jpg', auto: () => ({ url: () => '/placeholder-image.jpg' }) };
+    // Create a mock ImageUrlBuilder with all the methods needed
+    const mockBuilder = {
+      url: () => '/placeholder-image.jpg',
+      auto: () => mockBuilder,
+      width: () => mockBuilder,
+      height: () => mockBuilder,
+      fit: () => mockBuilder,
+      crop: () => mockBuilder,
+      quality: () => mockBuilder,
+      format: () => mockBuilder,
+      dpr: () => mockBuilder,
+      blur: () => mockBuilder,
+      sharpen: () => mockBuilder,
+      rect: () => mockBuilder,
+      focalPoint: () => mockBuilder,
+      flipHorizontal: () => mockBuilder,
+      flipVertical: () => mockBuilder,
+      invert: () => mockBuilder,
+      orientation: () => mockBuilder,
+      pad: () => mockBuilder,
+      bg: () => mockBuilder,
+      saturation: () => mockBuilder,
+      hue: () => mockBuilder,
+      lightness: () => mockBuilder
+    };
+    return mockBuilder;
   }
   return builder!.image(src).auto("format");
 };
