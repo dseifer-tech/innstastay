@@ -25,17 +25,17 @@ const createNoOpClient = () => ({
     console.warn('Sanity client: SKIP_SANITY=1 or dummy envs, returning empty results');
     return [];
   },
-  delete: async () => {
-    console.warn('Sanity client: SKIP_SANITY=1, skipping delete operation');
+  delete: async (id: string) => {
+    console.warn('Sanity client: SKIP_SANITY=1, skipping delete operation for:', id);
     return { success: true };
   },
-  create: async () => {
-    console.warn('Sanity client: SKIP_SANITY=1, skipping create operation');
-    return { _id: 'dummy-id', _type: 'hotel' };
+  create: async (doc: any) => {
+    console.warn('Sanity client: SKIP_SANITY=1, skipping create operation for:', doc._type);
+    return { _id: 'dummy-id', _type: doc._type || 'hotel' };
   },
-  createOrReplace: async () => {
-    console.warn('Sanity client: SKIP_SANITY=1, skipping createOrReplace operation');
-    return { _id: 'dummy-id', _type: 'hotel' };
+  createOrReplace: async (doc: any) => {
+    console.warn('Sanity client: SKIP_SANITY=1, skipping createOrReplace operation for:', doc._type);
+    return { _id: 'dummy-id', _type: doc._type || 'hotel' };
   },
   patch: () => ({
     set: () => ({
