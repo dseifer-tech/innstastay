@@ -18,6 +18,11 @@ export default function SearchResultsClient({
   selectedAmenities 
 }: SearchResultsClientProps) {
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  
+  // Debug logging
+  console.log('SearchResultsClient - Hotels received:', hotels.length);
+  console.log('SearchResultsClient - Search params:', searchParams);
+  console.log('SearchResultsClient - Selected amenities:', selectedAmenities);
 
   return (
     <div className="lg:col-span-3">
