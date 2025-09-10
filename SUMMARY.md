@@ -87,8 +87,6 @@ SERPAPI_KEY=your_serpapi_key
 PRICE_DEBUG=0
 PRICE_WRITE_FILES=0
 
-# Analytics
-NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
 **Removed/Deprecated Variables:**

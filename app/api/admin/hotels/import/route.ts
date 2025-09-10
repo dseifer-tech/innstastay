@@ -1,24 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@sanity/client'
 import { validateHotelData, validateRequestBody, sanitizeError } from '@/lib/security'
 import { log } from '@/lib/core/log'
 
-// Normalize project ID to handle dummy values in CI/build environments
-const normalizeProjectId = (projectId: string | undefined): string => {
-  if (!projectId) return 'dummy-project-id';
-  if (projectId.startsWith('dummy')) {
-    return projectId.replace(/_/g, '-');
-  }
-  return projectId;
-};
-
-const client = createClient({
-  projectId: normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID),
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2024-01-01',
-  token: process.env.SANITY_API_TOKEN,
-  useCdn: false,
-})
+export const runtime = 'nodejs';
 
 function generateSlug(name: string): string {
   return name
@@ -187,8 +171,22 @@ export async function POST(request: NextRequest) {
       hotelDoc.tags = autoTags
     }
 
+    // Use the new guarded Sanity client
+    const { getClient } = await import('@/lib/cms/sanityClient');
+    const client = await getClient();
+    
+    // Check if it's the no-op client
+    if (process.env.SKIP_SANITY === '1') {
+      log.admin.info('SKIP_SANITY=1, hotel import skipped:', hotel.name);
+      return NextResponse.json({
+        success: true,
+        hotel: { _id: 'dummy-id', ...hotelDoc },
+        message: `Hotel import skipped (SKIP_SANITY=1): "${hotel.name}"`
+      });
+    }
+
     // Create the hotel in Sanity
-    const result = await client.create(hotelDoc)
+    const result = await (client as any).create(hotelDoc)
 
     return NextResponse.json({
       success: true,

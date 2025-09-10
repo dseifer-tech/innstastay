@@ -48,7 +48,6 @@ SERPAPI_KEY=your_serpapi_key
 PRICE_DEBUG=0
 PRICE_WRITE_FILES=0
 
-NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
 Removed: USE_CMS_PAGES, SANITY_PREVIEW_SECRET, page revalidate secrets/webhooks.

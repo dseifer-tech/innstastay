@@ -1,25 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@sanity/client'
 import { log } from '@/lib/core/log'
 import { hotelCreateSchema } from '@/lib/validations/hotel'
 import { validateRequestBody } from '@/lib/security'
 
-// Normalize project ID to handle dummy values in CI/build environments
-const normalizeProjectId = (projectId: string | undefined): string => {
-  if (!projectId) return 'dummy-project-id';
-  if (projectId.startsWith('dummy')) {
-    return projectId.replace(/_/g, '-');
-  }
-  return projectId;
-};
-
-const client = createClient({
-  projectId: normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID),
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2024-01-01',
-  token: process.env.SANITY_API_TOKEN, // This needs to be a token with write permissions
-  useCdn: false,
-})
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -72,8 +56,22 @@ export async function POST(request: NextRequest) {
       bookingTemplate: validatedData.bookingTemplate || ''
     }
 
-    // Create the hotel in Sanity
-    const result = await client.create(hotelDoc)
+    // Use the new guarded Sanity client
+    const { getClient } = await import('@/lib/cms/sanityClient');
+    const client = await getClient();
+    
+    // Check if it's the no-op client
+    if (process.env.SKIP_SANITY === '1') {
+      log.admin.info('SKIP_SANITY=1, hotel creation skipped:', validatedData.name);
+      return NextResponse.json({
+        success: true,
+        hotel: { _id: 'dummy-id', ...hotelDoc },
+        message: `Hotel creation skipped (SKIP_SANITY=1): ${validatedData.name}`
+      });
+    }
+
+    // For real Sanity client, we need to cast it and call create properly
+    const result = await (client as any).create(hotelDoc)
 
     return NextResponse.json({
       success: true,

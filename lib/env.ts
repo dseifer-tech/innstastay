@@ -20,7 +20,6 @@ export function validateEnv() {
     
     // External services
     SERPAPI_KEY: process.env.SERPAPI_KEY || 'dummy-key',
-    NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID || 'G-DUMMY123456',
   };
 
   const missing = Object.entries(required)
@@ -36,7 +35,6 @@ export function validateEnv() {
         NEXT_PUBLIC_SANITY_DATASET: required.NEXT_PUBLIC_SANITY_DATASET,
         SANITY_API_TOKEN: required.SANITY_API_TOKEN,
         SERPAPI_KEY: required.SERPAPI_KEY,
-        NEXT_PUBLIC_GA_ID: required.NEXT_PUBLIC_GA_ID,
       };
     } else {
       throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
