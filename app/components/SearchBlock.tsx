@@ -49,8 +49,7 @@ export default function SearchBlock() {
             <input
               type="date"
               name="checkin"
-              value={checkin}
-              onChange={(e) => setCheckin(e.target.value)}
+              defaultValue={checkin}
               className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
               placeholder="yyyy-mm-dd"
               required
@@ -59,8 +58,7 @@ export default function SearchBlock() {
             <input
               type="date"
               name="checkout"
-              value={checkout}
-              onChange={(e) => setCheckout(e.target.value)}
+              defaultValue={checkout}
               className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
               placeholder="yyyy-mm-dd"
               required
@@ -70,8 +68,7 @@ export default function SearchBlock() {
               type="number"
               name="adults"
               min={1}
-              value={adults}
-              onChange={(e) => setAdults(Number(e.target.value))}
+              defaultValue={adults}
               className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
               placeholder="Adults"
               disabled={loading}
