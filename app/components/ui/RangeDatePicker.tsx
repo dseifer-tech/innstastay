@@ -60,10 +60,11 @@ export default function RangeDatePicker({
         <>
           <Popover.Button
             className={clsx(
-              'relative w-full rounded-xl border border-black/10 px-4 py-3 text-left text-sm',
-              'bg-white hover:bg-gray-50',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
-              'tabular-nums tracking-tight'
+              'relative w-full rounded-2xl border-2 border-blue-200/60 px-6 py-5 text-left',
+              'bg-gradient-to-r from-white to-blue-50/30 hover:from-blue-50/40 hover:to-blue-100/40',
+              'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/30',
+              'shadow-lg hover:shadow-xl transition-all duration-200',
+              'font-mono text-lg font-bold tracking-wide'
             )}
             aria-label="Choose check-in and check-out dates"
             onClick={() => {
@@ -72,8 +73,8 @@ export default function RangeDatePicker({
               console.log('Opening date picker');
             }}
           >
-            <CalendarIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-            <span className="pl-6">{labelText}</span>
+            <CalendarIcon className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-600" />
+            <span className="pl-10 text-gray-900 font-extrabold tracking-wider">{labelText}</span>
           </Popover.Button>
 
           <Transition
@@ -84,8 +85,8 @@ export default function RangeDatePicker({
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute z-40 mt-2">
-              <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl">
+            <Popover.Panel className="absolute z-40 mt-3">
+              <div className="rounded-3xl border-2 border-blue-100 bg-white p-6 shadow-2xl ring-1 ring-black/5">
                 <DayPicker
                   mode="range"
                   selected={tempRange}
@@ -119,15 +120,40 @@ export default function RangeDatePicker({
                   disabled={disabledDays}
                   defaultMonth={range?.from ?? new Date()}
                   styles={{
-                    day_selected: { backgroundColor: '#2563eb', color: 'white' },
-                    day_today: { fontWeight: 700, color: '#2563eb' },
-                    caption: { fontWeight: 600 },
+                    day_selected: { 
+                      backgroundColor: '#2563eb', 
+                      color: 'white', 
+                      fontWeight: 900,
+                      fontSize: '1.1rem',
+                      borderRadius: '12px'
+                    },
+                    day_today: { 
+                      fontWeight: 800, 
+                      color: '#2563eb',
+                      fontSize: '1.05rem',
+                      textDecoration: 'underline'
+                    },
+                    caption: { 
+                      fontWeight: 700,
+                      fontSize: '1.1rem',
+                      fontFamily: 'ui-monospace, SFMono-Regular, monospace'
+                    },
+                    head_cell: {
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      fontFamily: 'ui-monospace, SFMono-Regular, monospace'
+                    },
+                    cell: {
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      fontFamily: 'ui-monospace, SFMono-Regular, monospace'
+                    }
                   }}
                 />
-                <div className="flex items-center justify-between px-2 pb-2 pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between px-3 pb-3 pt-4 border-t-2 border-blue-100">
                   <button
                     type="button"
-                    className="text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-1 rounded-lg transition-colors"
+                    className="text-base font-bold text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-xl transition-all duration-200 font-mono"
                     onClick={() => {
                       setTempRange({ from: undefined, to: undefined });
                       setRange({ from: undefined, to: undefined });
@@ -138,7 +164,7 @@ export default function RangeDatePicker({
                   </button>
                   <button
                     type="button"
-                    className="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1 rounded-lg transition-colors"
+                    className="text-base font-bold text-blue-700 hover:text-blue-900 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-200 font-mono"
                     onClick={() => close()}
                   >
                     Done
