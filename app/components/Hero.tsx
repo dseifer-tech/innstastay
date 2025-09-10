@@ -11,12 +11,7 @@ type HeroProps = {
 
 export default function Hero({ title, subtitle, imageSrc, imageAlt }: HeroProps) {
   return (
-    <section
-      className="
-        relative isolate overflow-hidden w-full
-        h-[clamp(320px,36vw,520px)]
-      "
-    >
+    <section id="hero" className="relative isolate overflow-hidden w-full h-[clamp(320px,36vw,520px)]">
       {/* Background image */}
       <OptimizedImage
         src={imageSrc}
@@ -26,11 +21,11 @@ export default function Hero({ title, subtitle, imageSrc, imageAlt }: HeroProps)
         className="object-cover"
         wrapperClassName="absolute inset-0"
         sizes="100vw"
-        style={{ objectPosition: 'center 40%' }}
+        style={{ objectPosition: 'center 45%' }}
       />
 
       {/* Contrast overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/25" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/35 via-black/20 to-black/25" />
 
       {/* Text INSIDE the picture, centered */}
       <div className="relative z-10 h-full px-4 sm:px-6 max-w-5xl mx-auto
