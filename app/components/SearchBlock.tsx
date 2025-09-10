@@ -1,36 +1,32 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, useMemo, FormEvent } from 'react';
 import { Button } from '@/app/components/ui/Button';
+import RangeDatePicker from '@/app/components/ui/RangeDatePicker';
+import { type DateRange } from 'react-day-picker';
+import { format } from 'date-fns';
+
+function toYMD(d?: Date | null) {
+  return d ? format(d, 'yyyy-MM-dd') : '';
+}
 
 export default function SearchBlock() {
-  // Set default dates to tomorrow and day after
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const dayAfter = new Date();
-  dayAfter.setDate(dayAfter.getDate() + 2);
-  
-  const [checkin, setCheckin] = useState(tomorrow.toISOString().split('T')[0]);
-  const [checkout, setCheckout] = useState(dayAfter.toISOString().split('T')[0]);
+  const [range, setRange] = useState<DateRange | undefined>({ from: undefined, to: undefined });
   const [adults, setAdults] = useState(2);
   const [loading, setLoading] = useState(false);
 
+  const checkin  = useMemo(() => toYMD(range?.from ?? undefined), [range?.from]);
+  const checkout = useMemo(() => toYMD(range?.to ?? undefined),   [range?.to]);
+
   function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    
-    // Extract form data and build search URL
-    const formData = new FormData(e.currentTarget);
-    const params = new URLSearchParams();
-    
-    for (const [key, value] of formData.entries()) {
-      if (value) { // Only add non-empty values
-        params.append(key, value.toString());
-      }
+    // Prevent submit if dates are missing
+    if (!checkin || !checkout) {
+      e.preventDefault();
+      // basic front-end nudge
+      alert('Please choose both check-in and check-out dates.');
+      return;
     }
-    
-    // Navigate to search with all parameters
-    window.location.href = `/search?${params.toString()}`;
+    setLoading(true); // shows button loading & disables fields via form [disabled]
   }
 
   return (
@@ -43,49 +39,37 @@ export default function SearchBlock() {
           onSubmit={onSubmit}
           aria-busy={loading}
         >
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            <input
-              type="date"
-              name="checkin"
-              defaultValue={checkin}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="yyyy-mm-dd"
-              required
-              disabled={loading}
-            />
-            <input
-              type="date"
-              name="checkout"
-              defaultValue={checkout}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="yyyy-mm-dd"
-              required
-              disabled={loading}
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-3 items-center">
+            <div className="w-full">
+              <RangeDatePicker
+                value={range}
+                onChange={setRange}
+                minDate={new Date()}
+                label="Check-in date — Check-out date"
+              />
+            </div>
+
+            <input type="hidden" name="checkin"  value={checkin} />
+            <input type="hidden" name="checkout" value={checkout} />
+            <input type="hidden" name="children" value="0" />
+            <input type="hidden" name="rooms"    value="1" />
+
             <input
               type="number"
               name="adults"
               min={1}
-              defaultValue={adults}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={adults}
+              onChange={(e) => setAdults(Number(e.target.value))}
+              className="w-full sm:w-24 rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
               placeholder="Adults"
               disabled={loading}
             />
-            {/* Hidden defaults so the API always has complete params */}
-            <input type="hidden" name="children" value="0" />
-            <input type="hidden" name="rooms" value="1" />
 
-            <Button
-              type="submit"
-              className="sm:col-span-1"
-              data-loading={loading}
-              disabled={loading}
-            >
-              {loading ? 'Searching…' : 'Show Direct Rates'}
+            <Button type="submit" loading={loading} disabled={loading}>
+              Show Direct Rates
             </Button>
           </div>
 
-          {/* polite ARIA live region for screen readers */}
           <p className="sr-only" aria-live="polite">
             {loading ? 'Fetching direct rates…' : ''}
           </p>
