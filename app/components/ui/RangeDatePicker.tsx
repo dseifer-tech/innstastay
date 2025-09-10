@@ -5,6 +5,7 @@ import { Popover, Transition } from '@headlessui/react';
 import { format } from 'date-fns';
 import { DayPicker, DateRange } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
+import '@/app/styles/date-picker.css';
 import clsx from 'clsx';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
@@ -60,11 +61,12 @@ export default function RangeDatePicker({
         <>
           <Popover.Button
             className={clsx(
+              'font-date font-medium sm:font-semibold',
               'relative w-full rounded-2xl border-2 border-blue-200/60 px-6 py-5 text-left',
               'bg-gradient-to-r from-white to-blue-50/30 hover:from-blue-50/40 hover:to-blue-100/40',
               'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/30',
               'shadow-lg hover:shadow-xl transition-all duration-200',
-              'font-mono text-lg font-bold tracking-wide'
+              'text-lg font-bold tracking-wide'
             )}
             aria-label="Choose check-in and check-out dates"
             onClick={() => {

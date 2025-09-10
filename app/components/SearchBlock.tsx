@@ -63,7 +63,7 @@ export default function SearchBlock() {
                 min={1}
                 value={adults}
                 onChange={(e) => setAdults(Number(e.target.value))}
-                className="w-full sm:w-24 rounded-xl border border-black/10 pl-9 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 tabular-nums"
+                className="font-date w-full sm:w-24 rounded-xl border border-black/10 pl-9 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                 placeholder="Adults"
                 disabled={loading}
               />

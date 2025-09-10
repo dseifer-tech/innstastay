@@ -476,4 +476,12 @@
 
 .section-tint {
   background-image: linear-gradient(90deg, #f7fbff 0%, rgba(255,255,255,0.75) 60%, rgba(255,255,255,0.9) 100%);
+}
+
+/* Date / numeric UI: Inter + tabular & lining numerals */
+.font-date {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: .005em; /* tiny tracking improves legibility */
 } 

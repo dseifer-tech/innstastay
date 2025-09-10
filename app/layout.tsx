@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 
 import OptimizedImage from './components/OptimizedImage'
 import Navigation from './components/Navigation'
 import ThemeBackground from './components/ThemeBackground'
+import { interVar } from './fonts'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'InnstaStay - Commission-Free Hotel Booking in Toronto',
@@ -96,7 +94,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/innstastay-logo.svg" />
         <link rel="apple-touch-icon" href="/innstastay-logo.svg" />
       </head>
-      <body className={inter.className}>
+      <body className={`${interVar.variable} antialiased`}>
         {/* Subtle background gradient */}
         <ThemeBackground />
         

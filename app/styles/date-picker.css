@@ -1,0 +1,7 @@
+.rdp, .rdp-caption, .rdp-head_cell, .rdp-day {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+.rdp-day.rdp-day_selected { font-weight: 700; }
+.rdp-day.rdp-day_today { font-weight: 700; }
