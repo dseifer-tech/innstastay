@@ -76,8 +76,12 @@ export async function getHotelBySlug(
 export async function getHotelsForSearch(
   opts?: { checkIn?: string; checkOut?: string; adults?: number; children?: number; rooms?: number }
 ): Promise<Hotel[]> {
+  console.log('\n🏨 getHotelsForSearch called with:', opts);
+  
   try {
     const docs = await sanityClient.fetch(HOTELS_FOR_SEARCH);
+    console.log(`📊 Fetched ${docs.length} hotels from Sanity`);
+    
     const hotels: Hotel[] = docs.map((d: any) => {
       const h = fromSanityHotel(d);
       h.officialBookingUrl = buildBookingUrl(h, opts);
@@ -86,6 +90,7 @@ export async function getHotelsForSearch(
     
     // Optional headline price enrichment with concurrency limit
     if (opts?.checkIn && opts?.checkOut) {
+      console.log('💰 Starting price enrichment with dates:', opts.checkIn, '→', opts.checkOut);
       const hotelsWithTokens = hotels.filter(h => h.token);
     
     if (hotelsWithTokens.length > 0) {

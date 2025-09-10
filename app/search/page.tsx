@@ -66,8 +66,14 @@ function buildFilteredFacets(hotels: Hotel[], selectedAmenities: string[]): Arra
 }
 
 export default async function SearchPage({ searchParams }: { searchParams: Record<string, string | undefined> }) {
+  console.log('\n🔍 SEARCH PAGE DEBUG:');
+  console.log('📋 Raw search params:', searchParams);
+  
   const normalizedParams = normalizeSearchParams({ searchParams });
+  console.log('📋 Normalized params:', normalizedParams);
+  
   const allHotels = await getHotelsForSearch(normalizedParams);
+  console.log(`🏨 Found ${allHotels.length} hotels`);
   
   // Get selected amenities from URL
   const selectedAmenities = searchParams.amenities?.split(',').filter(Boolean) || [];
