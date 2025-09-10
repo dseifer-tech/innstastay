@@ -12,10 +12,12 @@ export default function SearchBlock() {
   const handleSearch = () => {
     try {
       const q = new URLSearchParams({ 
-        city: 'toronto', 
-        in: dates.in || '', 
-        out: dates.out || '', 
-        guests: String(guests), 
+        city: 'toronto',
+        checkin: dates.in || '', 
+        checkout: dates.out || '', 
+        adults: String(guests), 
+        children: '0', 
+        rooms: '1',
         n: neighborhood 
       });
       
@@ -27,7 +29,9 @@ export default function SearchBlock() {
       // Fallback to window.location
       const fallbackUrl = `/search?${new URLSearchParams({ 
         city: 'toronto', 
-        guests: String(guests) 
+        adults: String(guests),
+        children: '0',
+        rooms: '1'
       }).toString()}`;
       window.location.href = fallbackUrl;
     }
