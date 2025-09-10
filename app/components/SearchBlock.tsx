@@ -19,8 +19,8 @@ export default function SearchBlock() {
   };
 
   return (
-    <section className="mt-6 bg-white">
-      <div className="mx-auto max-w-5xl px-4">
+    <section className="bg-white">
+      <div className="container mx-auto px-4 mt-6 md:mt-8">
         <div className="rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-4 md:p-5">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <input 

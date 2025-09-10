@@ -62,15 +62,15 @@ export default function HomePageClient() {
         }}
       />
       
-      <div className="min-h-screen bg-gradient-to-b from-[#eef5ff] to-white">
-        {/* HERO: Clean lifestyle photo with clear USP (no search overlay) */}
-        <Hero 
-          title="Skip the Middlemen. Book Direct."
-          subtitle="Compare live rates from Toronto hotels. Zero commissions, zero markups."
-          imageSrc="/hero/homepage.jpg"
-          imageAlt="Couple in a modern Toronto hotel suite with skyline view"
-        />
+      <Hero 
+        title="Skip the Middlemen. Book Direct."
+        subtitle="Compare live rates from Toronto hotels. Zero commissions, zero markups."
+        imageSrc="/hero/homepage.jpg"
+        imageAlt="Toronto skyline at sunset"
+      />
 
+      {/* Everything below can live in the gradient wrapper */}
+      <div className="min-h-screen bg-gradient-to-b from-[#eef5ff] to-white">
         {/* SEARCH BLOCK: Dedicated white card section */}
         <SearchBlock />
 
