@@ -29,7 +29,7 @@ export default function RangeDatePicker({
     value ?? { from: undefined, to: undefined }
   );
   const [months, setMonths] = useState(2);
-  const [isOpen, setIsOpen] = useState(false);
+  const [tempRange, setTempRange] = useState<DateRange | undefined>();
 
   useEffect(() => {
     // Responsive months (1 on small screens)
@@ -56,15 +56,7 @@ export default function RangeDatePicker({
 
   return (
     <Popover className="relative">
-      {({ open, close }) => {
-        // Track when the popover opens to reset selection
-        if (open && !isOpen) {
-          setIsOpen(true);
-        } else if (!open && isOpen) {
-          setIsOpen(false);
-        }
-        
-        return (
+      {({ open, close }) => (
         <>
           <Popover.Button
             className={clsx(
@@ -75,6 +67,8 @@ export default function RangeDatePicker({
             )}
             aria-label="Choose check-in and check-out dates"
             onClick={() => {
+              // Start fresh selection when opening
+              setTempRange({ from: undefined, to: undefined });
               console.log('Opening date picker');
             }}
           >
@@ -94,29 +88,30 @@ export default function RangeDatePicker({
               <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl">
                 <DayPicker
                   mode="range"
-                  selected={open ? undefined : range}
+                  selected={tempRange}
                   onSelect={(newRange) => {
                     console.log('Date picker selection:', newRange);
                     
                     if (!newRange?.from) {
                       // Clear selection
-                      setRange({ from: undefined, to: undefined });
+                      setTempRange({ from: undefined, to: undefined });
                       return;
                     }
 
                     // Handle same date selection (prevent same check-in/check-out)
                     if (newRange?.from && newRange?.to && 
                         newRange.from.getTime() === newRange.to.getTime()) {
-                      setRange({ from: newRange.from, to: undefined });
+                      setTempRange({ from: newRange.from, to: undefined });
                       return;
                     }
 
-                    // Set the range as provided by DayPicker
-                    setRange(newRange);
+                    // Update temp range for visual feedback
+                    setTempRange(newRange);
                     
-                    // Auto-close when we have both different dates
+                    // Only commit to final range when we have both dates
                     if (newRange?.from && newRange?.to && 
                         newRange.from.getTime() !== newRange.to.getTime()) {
+                      setRange(newRange);
                       setTimeout(() => close(), 300);
                     }
                   }}
@@ -134,6 +129,7 @@ export default function RangeDatePicker({
                     type="button"
                     className="text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-1 rounded-lg transition-colors"
                     onClick={() => {
+                      setTempRange({ from: undefined, to: undefined });
                       setRange({ from: undefined, to: undefined });
                       console.log('Date range cleared');
                     }}
@@ -152,8 +148,7 @@ export default function RangeDatePicker({
             </Popover.Panel>
           </Transition>
         </>
-        );
-      }}
+      )}
     </Popover>
   );
 }
