@@ -29,7 +29,6 @@ export default function RangeDatePicker({
     value ?? { from: undefined, to: undefined }
   );
   const [months, setMonths] = useState(2);
-  const [isFirstClick, setIsFirstClick] = useState(true);
 
   useEffect(() => {
     // Responsive months (1 on small screens)
@@ -67,9 +66,7 @@ export default function RangeDatePicker({
             )}
             aria-label="Choose check-in and check-out dates"
             onClick={() => {
-              // Reset for fresh selection when opening
-              setIsFirstClick(true);
-              console.log('Opening date picker - ready for fresh selection');
+              console.log('Opening date picker');
             }}
           >
             <CalendarIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -90,36 +87,23 @@ export default function RangeDatePicker({
                   mode="range"
                   selected={range}
                   onSelect={(newRange) => {
-                    console.log('Date picker selection:', newRange, 'isFirstClick:', isFirstClick);
+                    console.log('Date picker selection:', newRange);
                     
                     if (!newRange?.from) {
                       // Clear selection
                       setRange({ from: undefined, to: undefined });
-                      setIsFirstClick(true);
-                      return;
-                    }
-
-                    // If this is the first click after opening, start fresh
-                    if (isFirstClick) {
-                      console.log('First click - starting fresh selection');
-                      setRange({ from: newRange.from, to: undefined });
-                      setIsFirstClick(false);
                       return;
                     }
 
                     // Handle same date selection (prevent same check-in/check-out)
                     if (newRange?.from && newRange?.to && 
                         newRange.from.getTime() === newRange.to.getTime()) {
-                      console.log('Same date selected - only setting check-in');
                       setRange({ from: newRange.from, to: undefined });
-                      setIsFirstClick(false);
                       return;
                     }
 
-                    // Set the complete range
-                    console.log('Setting complete range:', newRange);
+                    // Set the range as provided by DayPicker
                     setRange(newRange);
-                    setIsFirstClick(true); // Reset for next opening
                     
                     // Auto-close when we have both different dates
                     if (newRange?.from && newRange?.to && 
@@ -142,8 +126,7 @@ export default function RangeDatePicker({
                     className="text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-1 rounded-lg transition-colors"
                     onClick={() => {
                       setRange({ from: undefined, to: undefined });
-                      setIsFirstClick(true);
-                      console.log('Date range cleared - ready for fresh selection');
+                      console.log('Date range cleared');
                     }}
                   >
                     Clear dates
