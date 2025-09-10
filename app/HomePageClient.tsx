@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CheckCircle, Heart, Zap, Shield, DollarSign, Star, TrendingUp, Users } from 'lucide-react';
+import { Zap, Shield, Star, Users } from 'lucide-react';
 import SearchBlock from './components/SearchBlock';
 import Hero from './components/Hero';
 import HotelCard from './components/hotel/HotelCard';
 import FAQ from './components/FAQ';
+import DirectBenefits from './components/DirectBenefits';
 import type { Hotel } from '@/types/hotel';
 import { log } from '@/lib/core/log';
 
@@ -74,53 +75,9 @@ export default function HomePageClient() {
         {/* SEARCH BLOCK: Dedicated white card section */}
         <SearchBlock />
 
-        {/* WHY DIRECT: OTA vs Direct comparison grid */}
-        <section className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-neutral-800 mb-6">
-                Why Skip the OTAs?
-              </h2>
-              <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
-                Get the real deal: direct hotel rates without the booking site markup.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-8 text-center group hover:shadow-lg transition-shadow duration-200">
-                <div className="w-16 h-16 bg-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-200">
-                  <TrendingUp className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">OTAs Mark Up</h3>
-                <p className="text-neutral-600 text-sm leading-relaxed">Booking sites add 10-25% commissions to hotel rates</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-8 text-center group hover:shadow-lg transition-shadow duration-200">
-                <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-200">
-                  <DollarSign className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">We Show Real Rates</h3>
-                <p className="text-neutral-600 text-sm leading-relaxed">The hotel&apos;s actual price with zero markup</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 text-center group hover:shadow-lg transition-shadow duration-200">
-                <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-200">
-                  <CheckCircle className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">Better Cancellation</h3>
-                <p className="text-neutral-600 text-sm leading-relaxed">Flexible policies and loyalty perks direct from hotels</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 text-center group hover:shadow-lg transition-shadow duration-200">
-                <div className="w-16 h-16 bg-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-200">
-                  <Heart className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">Earn Loyalty Points</h3>
-                <p className="text-neutral-600 text-sm leading-relaxed">Get rewards when you book directly with hotels</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* WHY DIRECT: Updated benefits section with new copy and design */}
+        <div className="h-4 sm:h-6" />
+        <DirectBenefits />
 
         {/* TRANSPARENCY BANNER: Best Price Promise */}
         <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
