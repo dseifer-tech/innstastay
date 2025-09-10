@@ -61,12 +61,12 @@ export default function RangeDatePicker({
         <>
           <Popover.Button
             className={clsx(
-              'font-date font-medium sm:font-semibold',
+              'font-date font-normal sm:font-medium',
               'relative w-full rounded-2xl border-2 border-blue-200/60 px-6 py-5 text-left',
               'bg-gradient-to-r from-white to-blue-50/30 hover:from-blue-50/40 hover:to-blue-100/40',
               'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/30',
               'shadow-lg hover:shadow-xl transition-all duration-200',
-              'text-lg font-bold tracking-wide'
+              'text-lg font-medium tracking-normal'
             )}
             aria-label="Choose check-in and check-out dates"
             onClick={() => {
@@ -76,7 +76,7 @@ export default function RangeDatePicker({
             }}
           >
             <CalendarIcon className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-600" />
-            <span className="pl-10 text-gray-900 font-extrabold tracking-wider">{labelText}</span>
+            <span className="pl-10 text-gray-900 font-medium tracking-normal">{labelText}</span>
           </Popover.Button>
 
           <Transition
