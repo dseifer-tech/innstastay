@@ -19,7 +19,7 @@ export default function SearchBlock() {
   };
 
   return (
-    <section className="relative z-20 -mt-4 md:-mt-6">
+    <section className="mt-6">
       <div className="mx-auto max-w-5xl px-4">
         <div className="rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-4 md:p-5">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
