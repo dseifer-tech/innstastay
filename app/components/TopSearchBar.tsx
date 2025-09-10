@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { format, addDays, parseISO } from 'date-fns';
-import { Search, Calendar, User, X } from 'lucide-react';
-import ProfessionalCalendar from './ProfessionalCalendar';
+import { format, parseISO } from 'date-fns';
+import { Search, User, X } from 'lucide-react';
+import RangeDatePicker from '@/app/components/ui/RangeDatePicker';
+import { type DateRange } from 'react-day-picker';
 import { log } from '@/lib/core/log';
 
 interface TopSearchBarProps {
@@ -16,13 +17,12 @@ export default function TopSearchBar({ className = "" }: TopSearchBarProps) {
   const urlSearchParams = useSearchParams();
   
   // State for form inputs
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({ from: undefined, to: undefined });
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);
   
   // Modal states
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTravelerModal, setShowTravelerModal] = useState(false);
 
   // Initialize from URL params
@@ -33,21 +33,13 @@ export default function TopSearchBar({ className = "" }: TopSearchBarProps) {
     const childrenParam = urlSearchParams.get('children');
     const roomsParam = urlSearchParams.get('rooms');
 
-    if (checkIn) {
+    if (checkIn || checkOut) {
       try {
-        const checkInDate = parseISO(checkIn);
-        setDateRange(prev => [checkInDate, prev[1]]);
+        const from = checkIn ? parseISO(checkIn) : undefined;
+        const to = checkOut ? parseISO(checkOut) : undefined;
+        setDateRange({ from, to });
       } catch (e) {
-        log.ui.warn('Invalid check-in date:', checkIn);
-      }
-    }
-
-    if (checkOut) {
-      try {
-        const checkOutDate = parseISO(checkOut);
-        setDateRange(prev => [prev[0], checkOutDate]);
-      } catch (e) {
-        log.ui.warn('Invalid check-out date:', checkOut);
+        log.ui.warn('Invalid date params:', checkIn, checkOut);
       }
     }
 
@@ -66,11 +58,11 @@ export default function TopSearchBar({ className = "" }: TopSearchBarProps) {
   const handleSearch = () => {
     const params = new URLSearchParams();
     
-    if (dateRange[0]) {
-      params.set('checkin', format(dateRange[0], 'yyyy-MM-dd'));
+    if (dateRange?.from) {
+      params.set('checkin', format(dateRange.from, 'yyyy-MM-dd'));
     }
-    if (dateRange[1]) {
-      params.set('checkout', format(dateRange[1], 'yyyy-MM-dd'));
+    if (dateRange?.to) {
+      params.set('checkout', format(dateRange.to, 'yyyy-MM-dd'));
     }
     if (adults > 0) params.set('adults', adults.toString());
     if (children > 0) params.set('children', children.toString());
@@ -91,22 +83,14 @@ export default function TopSearchBar({ className = "" }: TopSearchBarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
         <div className="flex items-center gap-3">
           {/* Dates */}
-          <button
-            type="button"
-            onClick={() => setShowDatePicker(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors min-w-0 flex-1"
-          >
-            <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
-            <div className="min-w-0 text-left">
-              <div className="text-xs text-gray-500">Check-in • Check-out</div>
-              <div className="text-sm font-medium text-gray-900 truncate">
-                {dateRange[0] && dateRange[1] 
-                  ? `${format(dateRange[0], 'MMM dd')} – ${format(dateRange[1], 'MMM dd')}`
-                  : 'Select dates'
-                }
-              </div>
-            </div>
-          </button>
+          <div className="min-w-0 flex-1">
+            <RangeDatePicker
+              value={dateRange}
+              onChange={setDateRange}
+              minDate={new Date()}
+              label="Select dates"
+            />
+          </div>
 
           {/* Travelers */}
           <button
@@ -135,16 +119,6 @@ export default function TopSearchBar({ className = "" }: TopSearchBarProps) {
         </div>
       </div>
 
-      {/* Professional Calendar Modal */}
-      <ProfessionalCalendar
-        isOpen={showDatePicker}
-        onClose={() => setShowDatePicker(false)}
-        startDate={dateRange[0]}
-        endDate={dateRange[1]}
-        onDateRangeChange={handleDateRangeChange}
-        minDate={new Date()}
-        maxDate={addDays(new Date(), 365)}
-      />
 
       {/* Traveler Modal */}
       {showTravelerModal && (
