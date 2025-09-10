@@ -1,8 +1,18 @@
 import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 
+// Normalize project ID to handle dummy values in CI/build environments
+const normalizeProjectId = (projectId: string | undefined): string => {
+  if (!projectId) return 'dummy-project-id';
+  // Convert dummy_project_id to dummy-project-id for Sanity compatibility
+  if (projectId.startsWith('dummy')) {
+    return projectId.replace(/_/g, '-');
+  }
+  return projectId;
+};
+
 export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  projectId: normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID),
   dataset: 'production', // Use production dataset for both dev and prod
   apiVersion: '2023-05-03',
   useCdn: false, // Disable CDN for development
