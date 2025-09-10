@@ -69,10 +69,10 @@ export default function RootLayout({
     <html lang="en">
                    <head>
         
-        {/* Preload main font for performance */}
+        {/* Preload Google Fonts for performance */}
         <link 
           rel="preload" 
-          href="/fonts/inter-var.woff2" 
+          href="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" 
           as="font" 
           type="font/woff2" 
           crossOrigin="anonymous" 
