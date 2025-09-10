@@ -24,7 +24,27 @@ const createNoOpClient = () => ({
   fetch: async () => {
     console.warn('Sanity client: SKIP_SANITY=1 or dummy envs, returning empty results');
     return [];
-  }
+  },
+  delete: async () => {
+    console.warn('Sanity client: SKIP_SANITY=1, skipping delete operation');
+    return { success: true };
+  },
+  create: async () => {
+    console.warn('Sanity client: SKIP_SANITY=1, skipping create operation');
+    return { _id: 'dummy-id', _type: 'hotel' };
+  },
+  createOrReplace: async () => {
+    console.warn('Sanity client: SKIP_SANITY=1, skipping createOrReplace operation');
+    return { _id: 'dummy-id', _type: 'hotel' };
+  },
+  patch: () => ({
+    set: () => ({
+      commit: async () => {
+        console.warn('Sanity client: SKIP_SANITY=1, skipping patch operation');
+        return { _id: 'dummy-id', _type: 'hotel' };
+      }
+    })
+  })
 });
 
 export const sanityClient = shouldSkipSanity() 
