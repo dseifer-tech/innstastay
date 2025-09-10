@@ -48,12 +48,6 @@ export default function TopSearchBar({ className = "" }: TopSearchBarProps) {
     if (roomsParam) setRooms(Number(roomsParam));
   }, [urlSearchParams]);
 
-  const handleDateRangeChange = (start: Date | null, end: Date | null) => {
-    setDateRange([start, end]);
-    if (start && end) {
-      setShowDatePicker(false);
-    }
-  };
 
   const handleSearch = () => {
     const params = new URLSearchParams();

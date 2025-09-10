@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Popover, Transition } from '@headlessui/react';
-import { format, addDays, isAfter } from 'date-fns';
+import { format } from 'date-fns';
 import { DayPicker, DateRange } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import clsx from 'clsx';
@@ -38,8 +38,6 @@ export default function RangeDatePicker({
     return () => window.removeEventListener('resize', update);
   }, []);
 
-  // Close calendar automatically when a full range is chosen
-  const isComplete = !!range?.from && !!range?.to;
 
   useEffect(() => {
     onChange?.(range);
@@ -57,7 +55,7 @@ export default function RangeDatePicker({
 
   return (
     <Popover className="relative">
-      {({ close, open }) => (
+      {({ close }) => (
         <>
           <Popover.Button
             className={clsx(
