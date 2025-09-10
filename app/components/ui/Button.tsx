@@ -18,7 +18,10 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
     'disabled:opacity-50 disabled:pointer-events-none';
   const variants = {
     primary:
-      'bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus-visible:ring-blue-600',
+      'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm ' +
+      'hover:from-blue-700 hover:to-indigo-700 ' +
+      'focus-visible:ring-blue-600 ' +
+      'active:translate-y-[1px] active:shadow-none',
     secondary:
       'bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-sm focus-visible:ring-gray-400',
   };

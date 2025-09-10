@@ -5,6 +5,7 @@ import { Button } from '@/app/components/ui/Button';
 import RangeDatePicker from '@/app/components/ui/RangeDatePicker';
 import { type DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
+import { Users } from 'lucide-react';
 
 function toYMD(d?: Date | null) {
   return d ? format(d, 'yyyy-MM-dd') : '';
@@ -30,10 +31,10 @@ export default function SearchBlock() {
   }
 
   return (
-    <section className="mt-6 md:mt-8">
+    <section className="mt-6 md:mt-8 bg-gradient-to-r from-[#eef5ff] to-white/60 py-3">
       <div className="mx-auto max-w-5xl px-4">
         <form
-          className="rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-4 md:p-5"
+          className="rounded-[20px] bg-white/90 supports-[backdrop-filter]:backdrop-blur border border-black/5 shadow-[0_8px_30px_rgba(0,0,0,.06)] p-4 md:p-5 focus-within:ring-2 focus-within:ring-blue-600"
           method="GET"
           action="/search"
           onSubmit={onSubmit}
@@ -54,16 +55,19 @@ export default function SearchBlock() {
             <input type="hidden" name="children" value="0" />
             <input type="hidden" name="rooms"    value="1" />
 
-            <input
-              type="number"
-              name="adults"
-              min={1}
-              value={adults}
-              onChange={(e) => setAdults(Number(e.target.value))}
-              className="w-full sm:w-24 rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-              placeholder="Adults"
-              disabled={loading}
-            />
+            <div className="relative">
+              <Users className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+              <input
+                type="number"
+                name="adults"
+                min={1}
+                value={adults}
+                onChange={(e) => setAdults(Number(e.target.value))}
+                className="w-full sm:w-24 rounded-xl border border-black/10 pl-9 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 tabular-nums"
+                placeholder="Adults"
+                disabled={loading}
+              />
+            </div>
 
             <Button type="submit" loading={loading} disabled={loading}>
               Show Direct Rates

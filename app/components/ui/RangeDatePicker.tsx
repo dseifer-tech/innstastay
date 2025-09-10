@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { DayPicker, DateRange } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import clsx from 'clsx';
+import { Calendar as CalendarIcon } from 'lucide-react';
 
 type Props = {
   value?: DateRange | undefined;
@@ -59,9 +60,10 @@ export default function RangeDatePicker({
         <>
           <Popover.Button
             className={clsx(
-              'w-full rounded-xl border border-black/10 px-4 py-3 text-left text-sm',
+              'relative w-full rounded-xl border border-black/10 px-4 py-3 text-left text-sm',
+              'bg-white hover:bg-gray-50',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600',
-              'bg-white hover:bg-gray-50'
+              'tabular-nums tracking-tight'
             )}
             aria-label="Choose check-in and check-out dates"
             onClick={() => {
@@ -70,7 +72,8 @@ export default function RangeDatePicker({
               console.log('Opening date picker - ready for fresh selection');
             }}
           >
-            {labelText}
+            <CalendarIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <span className="pl-6">{labelText}</span>
           </Popover.Button>
 
           <Transition
@@ -82,7 +85,7 @@ export default function RangeDatePicker({
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel className="absolute z-40 mt-2">
-              <div className="rounded-2xl border border-gray-200 bg-white p-2 shadow-xl">
+              <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl">
                 <DayPicker
                   mode="range"
                   selected={range}
@@ -127,6 +130,11 @@ export default function RangeDatePicker({
                   numberOfMonths={months}
                   disabled={disabledDays}
                   defaultMonth={range?.from ?? new Date()}
+                  styles={{
+                    day_selected: { backgroundColor: '#2563eb', color: 'white' },
+                    day_today: { fontWeight: 700, color: '#2563eb' },
+                    caption: { fontWeight: 600 },
+                  }}
                 />
                 <div className="flex items-center justify-between px-2 pb-2 pt-2 border-t border-gray-100">
                   <button
