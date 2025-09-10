@@ -87,31 +87,48 @@ export default function RangeDatePicker({
                   selected={range}
                   onSelect={(newRange) => {
                     console.log('Date picker selection:', newRange);
-                    setRange(newRange);
                     
-                    // Auto-close when both dates are selected
-                    if (newRange?.from && newRange?.to) {
-                      setTimeout(() => close(), 200);
+                    // Only set range if we have at least a from date
+                    if (newRange?.from) {
+                      // If user selected same date for from and to, just set from
+                      if (newRange?.from && newRange?.to && 
+                          newRange.from.getTime() === newRange.to.getTime()) {
+                        setRange({ from: newRange.from, to: undefined });
+                      } else {
+                        setRange(newRange);
+                      }
+                    } else {
+                      // Clear selection
+                      setRange({ from: undefined, to: undefined });
+                    }
+                    
+                    // Auto-close only when we have both different dates
+                    if (newRange?.from && newRange?.to && 
+                        newRange.from.getTime() !== newRange.to.getTime()) {
+                      setTimeout(() => close(), 300);
                     }
                   }}
                   numberOfMonths={months}
                   disabled={disabledDays}
                   defaultMonth={range?.from ?? new Date()}
                 />
-                <div className="flex items-center justify-between px-2 pb-2">
+                <div className="flex items-center justify-between px-2 pb-2 pt-2 border-t border-gray-100">
                   <button
                     type="button"
-                    className="text-xs text-gray-600 hover:text-gray-900 underline"
-                    onClick={() => setRange({ from: undefined, to: undefined })}
+                    className="text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-1 rounded-lg transition-colors"
+                    onClick={() => {
+                      setRange({ from: undefined, to: undefined });
+                      console.log('Date range cleared');
+                    }}
                   >
-                    Clear
+                    Clear dates
                   </button>
                   <button
                     type="button"
-                    className="text-xs text-blue-600 hover:text-blue-800 underline"
+                    className="text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1 rounded-lg transition-colors"
                     onClick={() => close()}
                   >
-                    Close
+                    Done
                   </button>
                 </div>
               </div>
