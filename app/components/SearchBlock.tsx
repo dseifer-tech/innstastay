@@ -4,12 +4,19 @@ import { useState, FormEvent } from 'react';
 import { Button } from '@/app/components/ui/Button';
 
 export default function SearchBlock() {
-  const [checkin, setCheckin] = useState('');
-  const [checkout, setCheckout] = useState('');
+  // Set default dates to tomorrow and day after
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfter = new Date();
+  dayAfter.setDate(dayAfter.getDate() + 2);
+  
+  const [checkin, setCheckin] = useState(tomorrow.toISOString().split('T')[0]);
+  const [checkout, setCheckout] = useState(dayAfter.toISOString().split('T')[0]);
   const [adults, setAdults] = useState(2);
   const [loading, setLoading] = useState(false);
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
+    console.log('🔍 Form submission:', { checkin, checkout, adults });
     setLoading(true);
     // let the browser do a normal GET submit to /search
   }
