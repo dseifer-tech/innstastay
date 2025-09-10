@@ -33,20 +33,34 @@ describe('/api/revalidate', () => {
     jest.resetAllMocks()
   })
 
-  it('revalidates tags when provided', async () => {
-    const res = await POST(req({ tags: ['navigation', 'page:about'] }))
-    expect(revalidateTag).toHaveBeenCalledWith('navigation')
-    expect(revalidateTag).toHaveBeenCalledWith('page:about')
-    expect(revalidatePath).not.toHaveBeenCalled()
+  it('revalidates hotel paths when provided', async () => {
+    const res = await POST(req({ paths: ['/hotels/fairmont-royal-york', '/hotels/shangri-la-toronto'] }))
+    expect(revalidatePath).toHaveBeenCalledWith('/hotels/fairmont-royal-york')
+    expect(revalidatePath).toHaveBeenCalledWith('/hotels/shangri-la-toronto')
+    expect(revalidateTag).not.toHaveBeenCalled()
     expect(res.status).toBe(200)
   })
 
-  it('revalidates paths when provided', async () => {
-    const res = await POST(req({ paths: ['/about', '/contact'] }))
-    expect(revalidatePath).toHaveBeenCalledWith('/about')
-    expect(revalidatePath).toHaveBeenCalledWith('/contact')
+  it('ignores non-hotel paths', async () => {
+    const res = await POST(req({ paths: ['/about', '/contact', '/hotels/fairmont-royal-york'] }))
+    expect(revalidatePath).toHaveBeenCalledWith('/hotels/fairmont-royal-york')
+    expect(revalidatePath).not.toHaveBeenCalledWith('/about')
+    expect(revalidatePath).not.toHaveBeenCalledWith('/contact')
     expect(revalidateTag).not.toHaveBeenCalled()
     expect(res.status).toBe(200)
+  })
+
+  it('handles empty paths array', async () => {
+    const res = await POST(req({ paths: [] }))
+    expect(revalidatePath).not.toHaveBeenCalled()
+    expect(revalidateTag).not.toHaveBeenCalled()
+    expect(res.status).toBe(200)
+  })
+
+  it('requires valid secret', async () => {
+    const res = await POST(req({ paths: ['/hotels/test'] }, { 'x-revalidate-secret': 'invalid' }))
+    expect(res.status).toBe(401)
+    expect(revalidatePath).not.toHaveBeenCalled()
   })
 })
 
