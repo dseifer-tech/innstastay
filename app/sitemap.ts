@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next'
 import { getHotelsForSearch } from '@/lib/hotelSource'
 
+export const runtime = 'nodejs';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.innstastay.com'
   

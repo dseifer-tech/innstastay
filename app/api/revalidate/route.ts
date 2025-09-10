@@ -1,5 +1,7 @@
 import { revalidatePath } from 'next/cache'
 
+export const runtime = 'nodejs';
+
 // Hotel-only revalidate endpoint: accepts { paths: ['/hotels/...', '/api/hotels...'] }
 export async function POST(req: Request) {
   try {

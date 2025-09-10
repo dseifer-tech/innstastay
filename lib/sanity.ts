@@ -11,18 +11,40 @@ const normalizeProjectId = (projectId: string | undefined): string => {
   return projectId;
 };
 
-export const client = createClient({
-  projectId: normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID),
-  dataset: 'production', // Use production dataset for both dev and prod
-  apiVersion: '2023-05-03',
-  useCdn: false, // Disable CDN for development
-  // Removed token temporarily to test if that's causing the issue
-})
+// Check if we should skip Sanity (CI mode or missing envs)
+const shouldSkipSanity = () => {
+  return (
+    process.env.SKIP_SANITY === '1' ||
+    !process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||
+    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID.startsWith('dummy')
+  );
+};
 
-const builder = imageUrlBuilder(client)
+// Create a no-op client for CI/build environments
+const createNoOpClient = () => ({
+  fetch: async () => {
+    console.warn('Sanity client: SKIP_SANITY=1 or dummy envs, returning empty results');
+    return [];
+  }
+});
+
+export const client = shouldSkipSanity() 
+  ? createNoOpClient()
+  : createClient({
+      projectId: normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID),
+      dataset: 'production', // Use production dataset for both dev and prod
+      apiVersion: '2023-05-03',
+      useCdn: false, // Disable CDN for development
+      // Removed token temporarily to test if that's causing the issue
+    });
+
+const builder = shouldSkipSanity() ? null : imageUrlBuilder(client)
 
 export function urlFor(source: any) {
-  return builder.image(source)
+  if (shouldSkipSanity()) {
+    return { url: () => '/placeholder-image.jpg' };
+  }
+  return builder!.image(source)
 }
 
 // Get all hotels with complete data

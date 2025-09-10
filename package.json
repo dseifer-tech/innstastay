@@ -60,7 +60,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
-    "lighthouse": "^11.6.0",
+    "lighthouse": "^12.8.2",
     "node-fetch": "^2.7.0",
     "puppeteer": "^22.0.0"
   }

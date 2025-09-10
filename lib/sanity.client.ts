@@ -10,9 +10,28 @@ const normalizeProjectId = (projectId: string | undefined): string => {
   return projectId;
 };
 
-export const sanityClient = createClient({
-  projectId: normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID),
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: "2025-08-01",
-  useCdn: true,
+// Check if we should skip Sanity (CI mode or missing envs)
+const shouldSkipSanity = () => {
+  return (
+    process.env.SKIP_SANITY === '1' ||
+    !process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||
+    process.env.NEXT_PUBLIC_SANITY_PROJECT_ID.startsWith('dummy')
+  );
+};
+
+// Create a no-op client for CI/build environments
+const createNoOpClient = () => ({
+  fetch: async () => {
+    console.warn('Sanity client: SKIP_SANITY=1 or dummy envs, returning empty results');
+    return [];
+  }
 });
+
+export const sanityClient = shouldSkipSanity() 
+  ? createNoOpClient()
+  : createClient({
+      projectId: normalizeProjectId(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID),
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+      apiVersion: "2025-08-01",
+      useCdn: true,
+    });
