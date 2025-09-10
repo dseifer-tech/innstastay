@@ -10,7 +10,15 @@ const shouldSkipSanity = () => {
   );
 };
 
-const builder = shouldSkipSanity() ? null : createImageUrlBuilder(sanityClient);
+let builder: any = null;
+if (!shouldSkipSanity()) {
+  try {
+    builder = createImageUrlBuilder(sanityClient);
+  } catch (error) {
+    console.warn('Failed to create Sanity image builder:', error);
+    builder = null;
+  }
+}
 
 export const urlFor = (src: any) => {
   if (shouldSkipSanity()) {
@@ -41,5 +49,5 @@ export const urlFor = (src: any) => {
     };
     return mockBuilder;
   }
-  return builder!.image(src).auto("format");
+  return builder?.image(src).auto("format");
 };
