@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Zap, Shield, Star, Users } from 'lucide-react';
-import SearchBlock from './components/SearchBlock';
-import Hero from './components/Hero';
+import HeroSearch from './components/HeroSearch';
 import HotelCard from './components/hotel/HotelCard';
 import FAQ from './components/FAQ';
 import DirectBenefits from './components/DirectBenefits';
@@ -64,17 +63,14 @@ export default function HomePageClient() {
         }}
       />
       
-      <Hero 
+      <HeroSearch 
         title="Skip the Middlemen. Book Direct."
         subtitle="Compare live rates from Toronto hotels. Zero commissions, zero markups."
-        imageSrc="/hero/homepage.jpg"
-        imageAlt="Toronto skyline at sunset"
+        theme="dark"
       />
 
       {/* Everything below can live in the gradient wrapper */}
       <div className="min-h-screen bg-gradient-to-b from-[#eef5ff] to-white">
-        {/* SEARCH BLOCK: Dedicated white card section */}
-        <SearchBlock />
 
         {/* WHY DIRECT: Updated benefits section with new copy and design */}
         <div className="h-4 sm:h-6" />
