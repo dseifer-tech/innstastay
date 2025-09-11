@@ -48,8 +48,8 @@ export default function HeroSearch({
     <section
       className={[
         "relative w-full",
-        // balanced height that doesn't dominate
-        "min-h-[420px] md:min-h-[520px]",
+        // shorter, more compact height
+        "min-h-[320px] md:min-h-[380px]",
         // soft gradient background
         isDark
           ? "bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800"
@@ -60,7 +60,7 @@ export default function HeroSearch({
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Copy block */}
-        <div className="pt-10 md:pt-14 lg:pt-16 text-center">
+        <div className="pt-8 md:pt-10 lg:pt-12 text-center">
           <h1
             className={`font-bold leading-tight tracking-tight 
               text-3xl md:text-5xl 
