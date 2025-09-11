@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { Popover, Transition } from '@headlessui/react';
 import { format } from 'date-fns';
 import { DayPicker, DateRange } from 'react-day-picker';
@@ -31,14 +31,49 @@ export default function RangeDatePicker({
   );
   const [months, setMonths] = useState(2);
   const [tempRange, setTempRange] = useState<DateRange | undefined>();
+  const [popupPosition, setPopupPosition] = useState<'bottom' | 'top'>('bottom');
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Position calculation for popup
+  const calculatePosition = () => {
+    if (!buttonRef.current) return;
+    
+    const rect = buttonRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    
+    // Estimate calendar height (roughly 400px for 2 months)
+    const estimatedCalendarHeight = months === 1 ? 350 : 450;
+    
+    // Use top positioning if there's not enough space below
+    if (spaceBelow < estimatedCalendarHeight && spaceAbove > estimatedCalendarHeight) {
+      setPopupPosition('top');
+    } else {
+      setPopupPosition('bottom');
+    }
+  };
 
   useEffect(() => {
-    // Responsive months (1 on small screens)
-    const update = () => setMonths(window.innerWidth < 640 ? 1 : 2);
+    // Responsive months and position recalculation
+    const update = () => {
+      setMonths(window.innerWidth < 640 ? 1 : 2);
+      setTimeout(() => calculatePosition(), 0); // Recalculate position after state update
+    };
+    
+    const handleScroll = () => {
+      calculatePosition();
+    };
+    
     update();
     window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [months]);
 
 
   useEffect(() => {
@@ -60,6 +95,7 @@ export default function RangeDatePicker({
       {({ open, close }) => (
         <>
           <Popover.Button
+            ref={buttonRef}
             className={clsx(
               'font-date font-normal sm:font-medium',
               'relative w-full rounded-2xl border-2 border-blue-200/60 px-6 py-5 text-left',
@@ -72,6 +108,7 @@ export default function RangeDatePicker({
             onClick={() => {
               // Start fresh selection when opening
               setTempRange({ from: undefined, to: undefined });
+              calculatePosition();
               console.log('Opening date picker');
             }}
           >
@@ -87,8 +124,18 @@ export default function RangeDatePicker({
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute z-40 mt-3">
-              <div className="rounded-3xl border-2 border-blue-100 bg-white p-6 shadow-2xl ring-1 ring-black/5">
+            <Popover.Panel 
+              className={clsx(
+                'absolute z-50',
+                // Mobile: full width with padding
+                'left-0 right-0 mx-2 sm:mx-0',
+                // Desktop: position relative to button
+                'sm:left-0 sm:right-auto sm:w-auto sm:min-w-full',
+                // Vertical positioning
+                popupPosition === 'bottom' ? 'mt-3' : 'bottom-full mb-3'
+              )}
+            >
+              <div className="rounded-3xl border-2 border-blue-100 bg-white p-4 sm:p-6 shadow-2xl ring-1 ring-black/5 max-h-[80vh] overflow-auto">
                 <DayPicker
                   mode="range"
                   selected={tempRange}
