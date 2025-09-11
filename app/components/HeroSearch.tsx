@@ -52,7 +52,7 @@ export default function HeroSearch({
         "min-h-[320px] md:min-h-[380px]",
         // soft gradient background
         isDark
-          ? "bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800"
+          ? "bg-gradient-to-b from-slate-700 via-slate-800 to-slate-700"
           : "bg-gradient-to-b from-slate-50 via-white to-white",
         className,
       ].join(" ")}
