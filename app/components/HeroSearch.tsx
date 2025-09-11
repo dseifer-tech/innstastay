@@ -63,7 +63,7 @@ export default function HeroSearch({
         <div className="pt-8 md:pt-10 lg:pt-12 text-center">
           <h1
             className={`font-bold leading-tight tracking-tight 
-              text-3xl md:text-5xl 
+              text-2xl md:text-4xl 
               ${isDark ? "text-white" : "text-neutral-900"}`}
           >
             {title}
