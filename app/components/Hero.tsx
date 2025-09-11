@@ -12,11 +12,11 @@ export default function Hero({ title, subtitle, imageSrc }: HeroProps) {
     <section
       className="
         relative w-full overflow-hidden 
-        aspect-[12/5]               /* ✅ Perfect for 1920x800 image */
+        aspect-[8/3]                /* ✅ Perfect for 1280x480 image */
       "
       style={{
         backgroundImage: `url(${imageSrc})`,
-        backgroundSize: "contain",
+        backgroundSize: "cover",
         backgroundPosition: "center 45%",
         backgroundRepeat: "no-repeat",
       }}
