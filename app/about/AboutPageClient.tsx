@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Search, Shield, DollarSign, CheckCircle, Building, Users, Eye, Link, Heart, Zap, TrendingDown, TrendingUp } from 'lucide-react';
 import MobileMenu from '@/app/components/MobileMenu';
 import SecondaryCTA from '@/app/components/SecondaryCTA';
+import SimpleHero from '@/app/components/SimpleHero';
 
 export default function AboutPageClient() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -11,18 +12,11 @@ export default function AboutPageClient() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#eef5ff] to-white">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              About InnstaStay
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              We&apos;re revolutionizing hotel booking by connecting travelers directly with hotels, eliminating middlemen and their fees.
-            </p>
-          </div>
-        </div>
-      </section>
+      <SimpleHero 
+        title="About InnstaStay"
+        subtitle="We're revolutionizing hotel booking by connecting travelers directly with hotels, eliminating middlemen and their fees."
+        theme="dark"
+      />
 
       {/* Mission Section */}
       <section className="py-20 bg-white">
