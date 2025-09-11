@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import MobileMenu from '@/app/components/MobileMenu';
 import OptimizedImage from '@/app/components/OptimizedImage';
+import SimpleHero from '@/app/components/SimpleHero';
 import { proxify } from '@/lib/img';
 
 export default function DowntownPageClient() {
@@ -11,18 +12,11 @@ export default function DowntownPageClient() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Downtown Toronto Hotels
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Discover the best hotels in downtown Toronto with direct booking and no commission fees.
-            </p>
-          </div>
-        </div>
-      </section>
+      <SimpleHero 
+        title="Downtown Toronto Hotels"
+        subtitle="Discover the best hotels in downtown Toronto with direct booking and no commission fees."
+        theme="dark"
+      />
 
       {/* Neighborhoods Quick Links */}
       <section className="py-12 bg-white">
