@@ -1,38 +1,37 @@
 "use client";
 
-import OptimizedImage from "./OptimizedImage";
-
 type HeroProps = {
   title: string;
-  subtitle: string;
-  imageSrc: string;
-  imageAlt: string;
+  subtitle?: string;
+  imageSrc: string;  // e.g. "/hero/homepage.jpg"
+  imageAlt?: string; // (backgrounds aren't read by SRs; we'll expose text)
 };
 
-export default function Hero({ title, subtitle, imageSrc, imageAlt }: HeroProps) {
+export default function Hero({ title, subtitle, imageSrc }: HeroProps) {
   return (
-    <section 
-      id="hero" 
-      className="relative isolate overflow-hidden w-full h-[clamp(320px,36vw,520px)]"
+    <section
+      className="
+        relative w-full overflow-hidden 
+        aspect-[1440/736]           /* ✅ exact 1440×736 ratio */
+      "
       style={{
         backgroundImage: `url(${imageSrc})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center 45%',
-        backgroundRepeat: 'no-repeat'
+        backgroundSize: "cover",
+        backgroundPosition: "center 45%",
+        backgroundRepeat: "no-repeat",
       }}
+      aria-label="Homepage hero"
     >
-      {/* Contrast overlay */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/35 via-black/20 to-black/25" />
+      {/* Subtle overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/25" />
 
-      {/* Text INSIDE the picture, centered */}
-      <div className="relative z-10 h-full px-4 sm:px-6 max-w-5xl mx-auto
+      {/* Text content */}
+      <div className="relative z-10 h-full max-w-5xl mx-auto px-4 sm:px-6 
                       flex flex-col items-center justify-center text-center text-white">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight drop-shadow-md">
-          {title}
-        </h1>
-        <p className="mt-2 sm:mt-3 text-sm sm:text-base lg:text-lg/relaxed opacity-90">
-          {subtitle}
-        </p>
+        <h1 className="text-3xl sm:text-5xl font-bold leading-tight">{title}</h1>
+        {subtitle && (
+          <p className="mt-3 sm:mt-4 text-base sm:text-xl text-white/90">{subtitle}</p>
+        )}
       </div>
     </section>
   );
