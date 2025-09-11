@@ -484,4 +484,11 @@
   font-variant-numeric: tabular-nums lining-nums;
   font-feature-settings: "tnum" 1, "lnum" 1;
   letter-spacing: .005em; /* tiny tracking improves legibility */
+}
+
+/* Ensure DayPicker months are side-by-side when 2+ months are rendered */
+.rdp-months { 
+  display: flex; 
+  flex-direction: row; 
+  gap: 1rem; 
 } 

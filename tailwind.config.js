@@ -19,6 +19,8 @@ module.exports = {
           700: '#0369a1',
           800: '#075985',
           900: '#0c4a6e',
+          DEFAULT: '#0ea5e9',
+          foreground: '#ffffff',
         },
         secondary: {
           50: '#f8fafc',
@@ -31,7 +33,22 @@ module.exports = {
           700: '#334155',
           800: '#1e293b',
           900: '#0f172a',
-        }
+        },
+        muted: {
+          DEFAULT: '#f1f5f9',
+          foreground: '#64748b',
+        },
+        accent: {
+          DEFAULT: '#f1f5f9',
+          foreground: '#0f172a',
+        },
+        popover: {
+          DEFAULT: '#ffffff',
+          foreground: '#0f172a',
+        },
+        border: '#e2e8f0',
+        input: '#e2e8f0',
+        background: '#ffffff',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

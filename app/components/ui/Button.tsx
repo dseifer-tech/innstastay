@@ -4,7 +4,7 @@ import { forwardRef, ButtonHTMLAttributes } from 'react';
 import clsx from 'clsx';
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   loading?: boolean;
 };
 
@@ -24,6 +24,10 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
       'active:translate-y-[1px] active:shadow-none',
     secondary:
       'bg-gray-100 text-gray-900 hover:bg-gray-200 shadow-sm focus-visible:ring-gray-400',
+    outline:
+      'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+    ghost:
+      'hover:bg-accent hover:text-accent-foreground',
   };
 
   return (
