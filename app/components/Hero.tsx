@@ -12,7 +12,7 @@ export default function Hero({ title, subtitle, imageSrc }: HeroProps) {
     <section
       className="
         relative w-full overflow-hidden 
-        aspect-[1440/736]           /* ✅ exact 1440×736 ratio */
+        aspect-[5/2]                /* ✅ Wide but shorter 5:2 ratio */
       "
       style={{
         backgroundImage: `url(${imageSrc})`,
