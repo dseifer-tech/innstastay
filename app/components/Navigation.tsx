@@ -20,7 +20,7 @@ export default function Navigation() {
 
   const fallback = [
     { label: 'Home', href: '/' },
-    { label: 'About', href: '/about' },
+    { label: 'About', href: '/#about' },
     { label: 'Downtown Hotels', href: '/hotels/toronto-downtown' },
     { label: 'Contact', href: '/contact' }
   ]

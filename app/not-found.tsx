@@ -47,7 +47,7 @@ export default function NotFound() {
           <div className="flex flex-wrap justify-center gap-2">
 
             <span className="text-gray-300">•</span>
-            <Link href="/about" className="text-blue-600 hover:text-blue-700 text-sm">
+            <Link href="/#about" className="text-blue-600 hover:text-blue-700 text-sm">
               About Us
             </Link>
             <span className="text-gray-300">•</span>

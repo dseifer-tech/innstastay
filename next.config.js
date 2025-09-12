@@ -4,6 +4,15 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 })
 
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/about',
+        destination: '/#about',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

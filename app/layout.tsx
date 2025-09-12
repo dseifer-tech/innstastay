@@ -125,7 +125,7 @@ export default function RootLayout({
                 <a href="/privacy" className="text-gray-300 hover:text-white transition-colors">
                   Privacy Policy
                 </a>
-                <a href="/about" className="text-gray-300 hover:text-white transition-colors">
+                <a href="/#about" className="text-gray-300 hover:text-white transition-colors">
                   About
                 </a>
                 <span className="text-gray-500">© 2024 InnstaStay. All rights reserved.</span>

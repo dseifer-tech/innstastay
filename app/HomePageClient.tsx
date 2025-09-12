@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Zap, Shield, Star, Users } from 'lucide-react';
+import { Zap, Star, Users } from 'lucide-react';
 import HeroSearch from './components/HeroSearch';
 import HotelCard from './components/hotel/HotelCard';
 import FAQ from './components/FAQ';
 import DirectBenefits from './components/DirectBenefits';
 import DirectBookingPromise from './components/DirectBookingPromise';
+import AboutContent from './components/AboutContent';
 import type { Hotel } from '@/types/hotel';
 import { log } from '@/lib/core/log';
 
@@ -14,22 +15,6 @@ export default function HomePageClient() {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [hotelsLoading, setHotelsLoading] = useState(true);
 
-  // Website schema for SEO
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "InnstaStay",
-    "url": "https://www.innstastay.com",
-    "description": "Compare verified direct rates at top Toronto hotels. No commissions or markups—book direct and save with InnstaStay.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://www.innstastay.com/search?checkin={checkin}&checkout={checkout}&adults={adults}&children={children}"
-      },
-      "query-input": "required name=checkin name=checkout name=adults name=children"
-    }
-  };
 
   // Fetch hotels for homepage preview
   useEffect(() => {
@@ -56,13 +41,6 @@ export default function HomePageClient() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(websiteSchema)
-        }}
-      />
-      
       <HeroSearch 
         title="Skip the Middlemen. Book Direct."
         subtitle="Compare live rates from Toronto hotels. Zero commissions, zero markups."
@@ -78,6 +56,9 @@ export default function HomePageClient() {
 
         {/* DIRECT BOOKING PROMISE: Safer messaging without price matching */}
         <DirectBookingPromise />
+
+        {/* ABOUT SECTION: About content with SEO-friendly H2 */}
+        <AboutContent />
 
         {/* HOTEL DIRECTORY: Featured downtown properties */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -194,7 +175,7 @@ export default function HomePageClient() {
                 Find Direct Rates →
               </a>
               <a 
-                href="/about" 
+                href="/#about" 
                 className="inline-block border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-xl text-lg font-bold transition-colors"
               >
                 Learn More

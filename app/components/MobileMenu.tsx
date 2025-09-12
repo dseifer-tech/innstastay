@@ -63,7 +63,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </li>
               <li>
                 <a 
-                  href="/about" 
+                  href="/#about" 
                   className="block text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors"
                   onClick={onClose}
                 >
