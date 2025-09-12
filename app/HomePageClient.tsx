@@ -43,7 +43,7 @@ export default function HomePageClient() {
     <>
       <HeroSearch 
         title="Skip the Middlemen. Book Direct."
-        subtitle="Compare live rates from Toronto hotels. Zero commissions, zero markups."
+        subtitle="Compare official prices and policies—no platform fees, no call centers."
         theme="dark"
       />
 
@@ -56,9 +56,6 @@ export default function HomePageClient() {
 
         {/* DIRECT BOOKING PROMISE: Safer messaging without price matching */}
         <DirectBookingPromise />
-
-        {/* ABOUT SECTION: About content with SEO-friendly H2 */}
-        <AboutContent />
 
         {/* HOTEL DIRECTORY: Featured downtown properties */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -120,6 +117,9 @@ export default function HomePageClient() {
             </div>
           </div>
         </section>
+
+        {/* ABOUT SECTION: About content with SEO-friendly H2 */}
+        <AboutContent />
 
         {/* SOCIAL PROOF: Trust indicators */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
