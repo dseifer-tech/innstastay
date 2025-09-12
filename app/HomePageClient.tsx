@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Zap, Star, Users } from 'lucide-react';
 import HeroSearch from './components/HeroSearch';
 import HotelCard from './components/hotel/HotelCard';
 import FAQ from './components/FAQ';
 import DirectBenefits from './components/DirectBenefits';
 import DirectBookingPromise from './components/DirectBookingPromise';
 import AboutContent from './components/AboutContent';
+import TrustSignals from './components/TrustSignals';
 import type { Hotel } from '@/types/hotel';
 import { log } from '@/lib/core/log';
 
@@ -121,39 +121,8 @@ export default function HomePageClient() {
         {/* ABOUT SECTION: About content with SEO-friendly H2 */}
         <AboutContent />
 
-        {/* SOCIAL PROOF: Trust indicators */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-8 text-center">
-                <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Users className="w-8 h-8 text-white" />
-                </div>
-                <div className="text-3xl font-bold text-neutral-800 mb-2">10,000+</div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-2">Happy Travelers</h3>
-                <p className="text-neutral-600 text-sm">Saved money by booking direct</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 text-center">
-                <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Star className="w-8 h-8 text-white" />
-                </div>
-                <div className="text-3xl font-bold text-neutral-800 mb-2">4.9/5</div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-2">Trust Rating</h3>
-                <p className="text-neutral-600 text-sm">From verified bookings</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 text-center">
-                <div className="w-16 h-16 bg-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Zap className="w-8 h-8 text-white" />
-                </div>
-                <div className="text-3xl font-bold text-neutral-800 mb-2">$2.3M+</div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-2">Saved in Fees</h3>
-                <p className="text-neutral-600 text-sm">By skipping booking sites</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* TRUST SIGNALS: Qualitative benefits */}
+        <TrustSignals />
 
         {/* FAQ SECTION */}
         <FAQ />
