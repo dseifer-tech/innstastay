@@ -21,7 +21,7 @@ export default function Navigation() {
   const fallback = [
     { label: 'Home', href: '/' },
     { label: 'About', href: '/#about' },
-    { label: 'Downtown Hotels', href: '/hotels/toronto-downtown' },
+    { label: 'Downtown Hotels', href: '/downtown-toronto' },
     { label: 'Contact', href: '/contact' }
   ]
   const items = (mainMenu.length ? mainMenu : fallback) as Array<MenuItem & { href?: string; external?: boolean }>

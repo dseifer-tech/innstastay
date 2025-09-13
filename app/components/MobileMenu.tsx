@@ -73,7 +73,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
               <li>
                 <a 
-                  href="/hotels/toronto-downtown" 
+                  href="/downtown-toronto" 
                   className="block text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors"
                   onClick={onClose}
                 >

@@ -21,6 +21,11 @@ import {
   Ticket
 } from 'lucide-react';
 
+import EventBanners from '@/app/components/EventBanners';
+import OpenNow from '@/app/components/OpenNow';
+import FirstLastTrainUPX from '@/app/components/FirstLastTrainUPX';
+import { HOURS } from '@/lib/toronto/hours';
+
 // ----------------------------------------------------------------------------
 // Downtown Toronto Landing Page (SEO-first)
 // - Neighbourhood-first UX
@@ -205,7 +210,6 @@ function Badge({ children }: { children: React.ReactNode }) {
   );
 }
 
-
 export default function DowntownPageClient() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -235,7 +239,7 @@ export default function DowntownPageClient() {
             name: 'Downtown Toronto Hotels, Neighbourhoods & Travel Guide (2025)',
             description:
               'Neighbourhood finder, UP Express & TTC tips, CityPASS, 2025 event highlights (TIFF, Pride, Caribana, CNE), Niagara day trips, food & MICHELIN, safety/accessibility, weather and an all‑in price calculator — book direct with transparent totals.',
-            url: 'https://innstastay.com/hotels/toronto-downtown',
+            url: 'https://innstastay.com/downtown-toronto',
           }),
         }}
       />
@@ -272,18 +276,18 @@ export default function DowntownPageClient() {
       />
 
       {/* Hero */}
-      <SimpleHero 
+      <SimpleHero
         title="Downtown Toronto: Best Neighbourhoods & Hotels — Book Direct"
         subtitle="Pick your vibe, see transit times from Pearson, plan top sights and events — then compare official hotel rates with all‑in pricing."
         theme="dark"
       />
 
+      <EventBanners />
+
       {/* Breadcrumbs */}
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4" aria-label="Breadcrumb">
         <ol className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
           <li><a className="hover:underline" href="/">Home</a></li>
-          <li className="text-gray-400">/</li>
-          <li><a className="hover:underline" href="/hotels">Hotels</a></li>
           <li className="text-gray-400">/</li>
           <li className="font-medium text-gray-900">Downtown Toronto</li>
         </ol>
@@ -299,7 +303,7 @@ export default function DowntownPageClient() {
               <p className="mt-1 text-gray-600">Filter by vibe and jump straight to hotel results near each area.</p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {NEIGHBOURHOODS.map((n) => (
               <a key={n.name} href={`/search?neighborhood=${slugify(n.name)}`} className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
@@ -332,7 +336,8 @@ export default function DowntownPageClient() {
               <p className="mt-1 text-gray-600">UP Express runs every ~15 minutes to Union Station. Tap PRESTO or contactless. <a className="text-blue-700 underline" href="https://www.upexpress.com/" target="_blank" rel="noopener">Check prices & service</a>. One Fare lets you transfer between TTC/GO within the window — <a className="text-blue-700 underline" href="https://www.metrolinx.com/en/fare-systems/one-fare" target="_blank" rel="noopener">how it works</a>.</p>
             </div>
           </div>
-          
+
+          <div className="mb-6"><FirstLastTrainUPX /></div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="rounded-2xl border border-gray-200 bg-white p-6">
               <h3 className="font-semibold text-gray-900">From Union Station</h3>
@@ -354,7 +359,7 @@ export default function DowntownPageClient() {
                 <li>Ferry to Islands departs from Jack Layton Ferry Terminal.</li>
               </ul>
             </div>
-              </div>
+          </div>
         </div>
       </section>
 
@@ -366,8 +371,8 @@ export default function DowntownPageClient() {
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Top sights & CityPASS</h2>
               <p className="mt-1 text-gray-600">Hit the icons in 1–2 days and save with <a className="text-blue-700 underline" href="https://www.citypass.com/toronto" target="_blank" rel="noopener">Toronto CityPASS</a> (CN Tower, Ripley\'s + 3 others; timed entry may apply).</p>
-              </div>
             </div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {SIGHTS.map((poi) => (
@@ -377,6 +382,7 @@ export default function DowntownPageClient() {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-700">{poi.name}</h3>
                 <p className="mt-1 text-sm text-gray-600">{poi.desc}</p>
+                {HOURS[poi.name] && <OpenNow hours={HOURS[poi.name]} tz="America/Toronto" />}
                 <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
                   <MapPin className="h-4 w-4" /> <span>Near {poi.near}</span>
                 </div>
@@ -456,7 +462,7 @@ export default function DowntownPageClient() {
             <div className="rounded-2xl border border-gray-200 bg-white p-5">
               <h3 className="font-semibold text-gray-900">Summer (Jun–Aug)</h3>
               <p className="mt-2 text-sm text-gray-700">Waterfront/Islands shine; festivals peak. Book early around long weekends and major events.</p>
-              </div>
+            </div>
             <div className="rounded-2xl border border-gray-200 bg-white p-5">
               <h3 className="font-semibold text-gray-900">Fall (Sep–Nov)</h3>
               <p className="mt-2 text-sm text-gray-700">TIFF headlines early Sept; later months bring foliage walks and Nuit Blanche.
@@ -506,7 +512,7 @@ export default function DowntownPageClient() {
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">All‑in price calculator (Toronto)</h2>
               <p className="mt-1 text-gray-600">Includes HST (13%) and Municipal Accommodation Tax (8.5%).</p>
             </div>
-            </div>
+          </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-gray-200 bg-white p-6">
@@ -559,8 +565,8 @@ export default function DowntownPageClient() {
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Toronto FAQs</h2>
               <p className="mt-1 text-gray-600">Real planning questions answered — visas/eTA, transit, passes, and seasons.</p>
-                </div>
-              </div>
+            </div>
+          </div>
 
           <div className="divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white">
             {FAQS.map((f) => (

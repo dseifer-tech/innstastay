@@ -11,6 +11,11 @@ const nextConfig = {
         destination: '/#about',
         permanent: true,
       },
+      {
+        source: '/hotels/toronto-downtown',
+        destination: '/downtown-toronto',
+        permanent: true,
+      },
     ];
   },
   images: {
