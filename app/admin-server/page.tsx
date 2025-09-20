@@ -147,7 +147,7 @@ export default function AdminServerPage() {
   const importHotel = async (hotel: SerpApiHotel) => {
     setImporting(true)
     try {
-      const response = await fetch('/api/admin/hotels/import', {
+      const response = await fetch('/admin/hotels/import', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

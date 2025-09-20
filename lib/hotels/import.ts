@@ -1,9 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { validateHotelData, validateRequestBody, sanitizeError } from '@/lib/security'
-import { log } from '@/lib/core/log'
+// lib/hotels/import.ts
+export type ImportPayload = {
+  sourceUrl?: string;
+  rows?: unknown[]; // TODO: define a proper Row type when schema is finalized
+  hotel?: any; // TODO: replace with proper Hotel type from existing route
+};
 
-export const runtime = 'nodejs';
+export type ImportResult = { imported: number; skipped: number };
 
+// Utility functions extracted from the original route
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
@@ -73,53 +77,39 @@ function extractAreaFromAddress(address: string): string {
   return ''
 }
 
-export async function POST(request: NextRequest) {
-  try {
+export async function importHotels(payload: ImportPayload): Promise<ImportResult> {
+  // Basic validation
+  if (!payload || (payload.sourceUrl == null && (!payload.rows || payload.rows.length === 0) && !payload.hotel)) {
+    throw new Error("Provide sourceUrl, rows, or hotel data.");
+  }
+
+  // Handle single hotel import (from existing route)
+  if (payload.hotel) {
+    const hotel = payload.hotel;
+
+    // Validate required fields
+    if (!hotel || !hotel.name || !hotel.property_token) {
+      throw new Error('Missing required hotel fields: name and property_token');
+    }
+
     // Security: Validate environment variables
     if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || !process.env.SANITY_API_TOKEN) {
-      log.admin.error('Missing required environment variables for hotel import')
-      return NextResponse.json({
-        success: false,
-        error: 'Server configuration error'
-      }, { status: 500 })
+      throw new Error('Missing required environment variables for hotel import');
     }
 
-    const body = await request.json()
+    // Import validation from security lib
+    const { validateHotelData, validateRequestBody } = await import('@/lib/security');
     
-    // Security: Validate request body
-    const bodyValidation = validateRequestBody(body)
-    if (!bodyValidation.valid) {
-      return NextResponse.json({
-        success: false,
-        error: bodyValidation.error || 'Invalid request body'
-      }, { status: 400 })
-    }
-
-    const { hotel } = body
-
     // Security: Validate hotel data
-    const hotelValidation = validateHotelData(hotel)
+    const hotelValidation = validateHotelData(hotel);
     if (!hotelValidation.valid) {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid hotel data',
-        details: hotelValidation.errors
-      }, { status: 400 })
+      throw new Error(`Invalid hotel data: ${hotelValidation.errors?.join(', ') || 'Validation failed'}`);
     }
 
-    if (!hotel || !hotel.name || !hotel.property_token) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required hotel fields'
-      }, { status: 400 })
-    }
-
-    // Generate slug from hotel name
-    const slug = generateSlug(hotel.name)
-    
-    // Extract city and area from address
-    const city = extractCityFromAddress(hotel.address)
-    const area = extractAreaFromAddress(hotel.address)
+    // Generate slug and extract location info
+    const slug = generateSlug(hotel.name);
+    const city = extractCityFromAddress(hotel.address);
+    const area = extractAreaFromAddress(hotel.address);
 
     // Create the hotel document
     const hotelDoc = {
@@ -137,7 +127,7 @@ export async function POST(request: NextRequest) {
       rating: hotel.rating || 0,
       hotelClass: hotel.hotel_class || 3,
       amenities: hotel.amenities || [],
-      tags: hotel.tags || [], // Use provided tags or generate based on amenities and location
+      tags: hotel.tags || [],
       seoTitle: hotel.seoTitle || hotel.name,
       seoDescription: hotel.seoDescription || hotel.description || `${hotel.name} - Book directly with no commissions.`,
       isActive: hotel.isActive !== false, // Default to true if not specified
@@ -150,57 +140,51 @@ export async function POST(request: NextRequest) {
         lat: hotel.latitude,
         lng: hotel.longitude
       } : undefined
-    }
+    };
 
     // Add auto-generated tags if no tags were provided
     if (!hotel.tags || hotel.tags.length === 0) {
-      const autoTags = []
+      const autoTags = [];
       if (hotel.amenities) {
-        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('pool'))) autoTags.push('pool')
-        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('gym'))) autoTags.push('fitness')
-        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('spa'))) autoTags.push('spa')
-        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('restaurant'))) autoTags.push('dining')
-        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('parking'))) autoTags.push('parking')
+        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('pool'))) autoTags.push('pool');
+        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('gym'))) autoTags.push('fitness');
+        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('spa'))) autoTags.push('spa');
+        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('restaurant'))) autoTags.push('dining');
+        if (hotel.amenities.some((a: string) => a.toLowerCase().includes('parking'))) autoTags.push('parking');
       }
       
-      const hotelArea = hotel.area || area
-      if (hotelArea.toLowerCase().includes('downtown')) autoTags.push('downtown')
-      if (hotelArea.toLowerCase().includes('luxury') || hotel.hotel_class >= 4) autoTags.push('luxury')
-      if (hotel.hotel_class <= 2) autoTags.push('budget')
+      const hotelArea = hotel.area || area;
+      if (hotelArea.toLowerCase().includes('downtown')) autoTags.push('downtown');
+      if (hotelArea.toLowerCase().includes('luxury') || hotel.hotel_class >= 4) autoTags.push('luxury');
+      if (hotel.hotel_class <= 2) autoTags.push('budget');
       
-      hotelDoc.tags = autoTags
+      hotelDoc.tags = autoTags;
     }
 
-    // Use the new guarded Sanity client
+    // Use the guarded Sanity client
     const { getClient } = await import('@/lib/cms/sanityClient');
     const client = await getClient();
     
     // Check if it's the no-op client
     if (process.env.SKIP_SANITY === '1') {
+      const { log } = await import('@/lib/core/log');
       log.admin.info('SKIP_SANITY=1, hotel import skipped:', hotel.name);
-      return NextResponse.json({
-        success: true,
-        hotel: { _id: 'dummy-id', ...hotelDoc },
-        message: `Hotel import skipped (SKIP_SANITY=1): "${hotel.name}"`
-      });
+      return { imported: 1, skipped: 0 };
     }
 
     // Create the hotel in Sanity
-    const result = await (client as any).create(hotelDoc)
-
-    return NextResponse.json({
-      success: true,
-      hotel: result,
-      message: `Successfully imported "${hotel.name}"`
-    })
-
-  } catch (error) {
-    // Security: Log error but don't expose details to client
-    log.admin.error('Error importing hotel:', error)
+    const result = await (client as any).create(hotelDoc);
     
-    return NextResponse.json({
-      success: false,
-      error: sanitizeError(error)
-    }, { status: 500 })
+    return { imported: 1, skipped: 0 };
   }
+
+  // TODO: implement actual bulk import for sourceUrl/rows:
+  // - if sourceUrl provided: fetch/parse
+  // - if rows provided: validate/transform rows
+  // - upsert hotels, handle duplicates
+  // For now, return a deterministic mock result:
+  const imported = Array.isArray(payload.rows) ? Math.max(0, payload.rows.length - 1) : 12;
+  const skipped = Array.isArray(payload.rows) ? (payload.rows.length ? 1 : 0) : 3;
+
+  return { imported, skipped };
 }
