@@ -15,7 +15,9 @@ export interface SecurityConfig {
   requireApiKey: boolean;
 }
 
-const ENV_ORIGINS = (process.env.ALLOWED_ORIGINS ?? '')
+import { ENV } from './env';
+
+const ENV_ORIGINS = (ENV.ALLOWED_ORIGINS ?? '')
   .split(',')
   .map(s => s.trim())
   .filter(Boolean);

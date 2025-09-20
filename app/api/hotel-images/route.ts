@@ -1,5 +1,7 @@
 // app/api/hotel-images/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { signProxyUrl } from '@/lib/crypto/sign';
+import { ENV } from '@/lib/env';
 
 export const runtime = 'nodejs';
 // Remove force-dynamic to allow CDN caching
@@ -41,6 +43,26 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const urlStr = searchParams.get('url');
   if (!urlStr) return NextResponse.json({ error: 'Image URL is required' }, { status: 400 });
+
+  // Check signature if required
+  const requireSignature = ENV.IMAGE_PROXY_REQUIRE_SIGNATURE === 'true';
+  if (requireSignature) {
+    const providedSig = searchParams.get('sig');
+    const secret = ENV.IMAGE_PROXY_SECRET;
+    
+    if (!secret) {
+      return NextResponse.json({ error: 'Image proxy not configured' }, { status: 500 });
+    }
+    
+    if (!providedSig) {
+      return NextResponse.json({ error: 'Signature required' }, { status: 403 });
+    }
+    
+    const expectedSig = signProxyUrl(urlStr, secret);
+    if (providedSig !== expectedSig) {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 403 });
+    }
+  }
 
 
 

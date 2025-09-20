@@ -1,7 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkRateLimit, validateOrigin, SECURITY_HEADERS } from './lib/security';
+import { validateOrigin, SECURITY_HEADERS } from './lib/security';
+import { ENV } from './lib/env';
 
-export function middleware(request: NextRequest) {
+const user = ENV.BASIC_AUTH_USER;
+const pass = ENV.BASIC_AUTH_PASS;
+
+function needsAuth() { 
+  return !!(user && pass) && ENV.NODE_ENV !== "development"; 
+}
+
+function unauthorized() {
+  return new NextResponse("Authentication required", {
+    status: 401,
+    headers: { "WWW-Authenticate": 'Basic realm="staging"' },
+  });
+}
+
+export function middleware(req: NextRequest) {
+  const path = req.nextUrl.pathname;
+  
+  // Skip static assets and Next internals
+  if (/^\/(_next|assets|favicon\.ico)/.test(path)) {
+    return NextResponse.next();
+  }
+
+  // Basic auth
+  if (needsAuth()) {
+    const header = req.headers.get("authorization") || "";
+    if (!header.startsWith("Basic ")) return unauthorized();
+    const [, b64] = header.split(" ");
+    const [u, p] = Buffer.from(b64, "base64").toString().split(":");
+    if (u !== user || p !== pass) return unauthorized();
+  }
+
   const res = NextResponse.next();
 
   // Security headers everywhere
@@ -9,15 +40,28 @@ export function middleware(request: NextRequest) {
     res.headers.set(k, v);
   }
 
-  const path = request.nextUrl.pathname;
-
-  // CORS/rate-limit ONLY for API
-  if (path.startsWith('/api/')) {
-    const rate = checkRateLimit(request);
-    if (!rate.allowed) {
-      return new NextResponse('Too Many Requests', { status: 429 });
+  // Per-IP rate limit for /api/*
+  const isApi = path.startsWith("/api/");
+  if (isApi) {
+    const ip = req.ip ?? req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    // naive in-memory bucket (resets on cold start)
+    const key = `rl:${ip}`;
+    const now = Date.now();
+    // @ts-ignore - attach to global
+    global.__RL = global.__RL || new Map<string, { t: number; c: number }>();
+    const store: Map<string, { t: number; c: number }> = (global as any).__RL;
+    const windowMs = 60_000; // 1 min
+    const limit = 60;        // requests / min
+    const rec = store.get(key);
+    if (!rec || now - rec.t > windowMs) {
+      store.set(key, { t: now, c: 1 });
+    } else {
+      rec.c += 1;
+      if (rec.c > limit) return new NextResponse("Too Many Requests", { status: 429 });
     }
-    const origin = request.headers.get('origin');
+
+    // CORS for API
+    const origin = req.headers.get('origin');
     if (validateOrigin(origin)) {
       res.headers.set('Access-Control-Allow-Origin', origin!);
     }
@@ -27,7 +71,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Staging: noindex for all HTML pages (not just admin/api)
-  const accept = request.headers.get('accept') || '';
+  const accept = req.headers.get('accept') || '';
   if (accept.includes('text/html')) {
     res.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   }
