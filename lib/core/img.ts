@@ -33,10 +33,10 @@ export function toProxyUrl(src: string): string {
   if (src.includes('cdn.sanity.io')) return src;
   
   // Don't proxy if already proxied
-  if (src.includes('/api/image-proxy')) return src;
+  if (src.includes('/api/hotel-images')) return src;
   
   // Proxy external URLs
-  return `/api/image-proxy?url=${encodeURIComponent(src)}`;
+  return `/api/hotel-images?url=${encodeURIComponent(src)}`;
 }
 
 /**

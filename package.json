@@ -12,7 +12,7 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false",
     "seo:test": "node scripts/seo-test.js",
-    "seo:test:prod": "BASE_URL=https://www.innstastay.com node scripts/seo-test.js",
+    "seo:test:staging": "BASE_URL=https://innstastay-keov.vercel.app node scripts/seo-test.js",
     "seo:generate": "npm run seo:sitemap && npm run seo:robots",
     "seo:sitemap": "node scripts/sitemap-generator.js",
     "seo:robots": "node scripts/robots-txt-generator.js",

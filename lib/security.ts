@@ -15,10 +15,15 @@ export interface SecurityConfig {
   requireApiKey: boolean;
 }
 
+const ENV_ORIGINS = (process.env.ALLOWED_ORIGINS ?? '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+
 export const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
   maxRequestsPerMinute: 60,
   maxInputLength: 500,
-  allowedOrigins: ['https://www.innstastay.com', 'http://localhost:3000'],
+  allowedOrigins: ENV_ORIGINS.length ? ENV_ORIGINS : ['http://localhost:3000'],
   requireApiKey: true,
 };
 
