@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { format, parseISO } from 'date-fns';
 import { Search } from 'lucide-react';
 import RangeDatePicker from '@/app/components/ui/RangeDatePicker';
+import { Button } from '@/app/components/ui/Button';
 import { type DateRange } from 'react-day-picker';
 import { log } from '@/lib/core/log';
 
@@ -70,15 +71,11 @@ export default function TopSearchBar({ className = "" }: TopSearchBarProps) {
           </div>
 
           {/* Search Button - Enhanced to match */}
-          <button
-            type="button"
-            onClick={handleSearch}
-            className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold text-lg shadow-lg hover:shadow-xl active:translate-y-[1px] active:shadow-none"
-          >
+          <Button type="button" onClick={handleSearch} size="lg" variant="primary" className="gap-2">
             <Search className="w-5 h-5" />
             <span className="hidden sm:inline">Search Hotels</span>
             <span className="sm:hidden">Search</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

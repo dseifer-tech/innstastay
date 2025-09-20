@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from 'lucide-react';
+import { Button } from '@/app/components/ui/Button';
 import OptimizedImage from './OptimizedImage';
 
 interface MobileMenuProps {
@@ -40,13 +41,9 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                />
               <span className="text-xs text-blue-600 tracking-wide mt-1">Commission-Free Booking</span>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Close menu"
-            >
+            <Button variant="ghost" size="sm" aria-label="Close menu" className="rounded-full p-2" onClick={onClose}>
               <X className="w-6 h-6" />
-            </button>
+            </Button>
           </div>
 
           {/* Navigation Links */}

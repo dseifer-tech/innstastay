@@ -5,7 +5,9 @@ import { useState, useEffect } from 'react';
 import { format, addDays } from 'date-fns';
 // Icons can be added back if rendered in UI
 import SearchBarWide from './SearchBarWide';
-import ProfessionalCalendar from './ProfessionalCalendar';
+import RangeDatePicker from '@/app/components/ui/RangeDatePicker';
+import { Button } from '@/app/components/ui/Button';
+import { type DateRange } from 'react-day-picker';
 // import LoadingSpinner from './LoadingSpinner';
 import { log } from "@/lib/core/log";
 
@@ -23,6 +25,10 @@ export default function StickySearchBar({ className = "" }: StickySearchBarProps
     addDays(new Date(), 1),
     addDays(new Date(), 2)
   ]);
+  const [range, setRange] = useState<DateRange | undefined>({
+    from: dateRange[0] ?? undefined,
+    to: dateRange[1] ?? undefined,
+  });
   const [searchParams, setSearchParams] = useState({
     adults: 2,
     children: 0
@@ -66,9 +72,6 @@ export default function StickySearchBar({ className = "" }: StickySearchBarProps
     parseDatesFromUrl();
   }, []);
 
-  const handleDateRangeChange = (start: Date | null, end: Date | null) => {
-    setDateRange([start, end]);
-  };
 
   const handleSearch = () => {
     const checkIn = dateRange[0] ? format(dateRange[0], 'yyyy-MM-dd') : format(addDays(new Date(), 1), 'yyyy-MM-dd');
@@ -111,16 +114,49 @@ export default function StickySearchBar({ className = "" }: StickySearchBarProps
         </div>
       </div>
 
-      {/* Professional Calendar Modal */}
-      <ProfessionalCalendar
-        isOpen={showDatePicker}
-        onClose={() => setShowDatePicker(false)}
-        startDate={dateRange[0]}
-        endDate={dateRange[1]}
-        onDateRangeChange={handleDateRangeChange}
-        minDate={new Date()}
-        maxDate={addDays(new Date(), 365)}
-      />
+      {/* Date Picker Modal */}
+      {showDatePicker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Select Dates</h3>
+              <button
+                onClick={() => setShowDatePicker(false)}
+                className="text-gray-400 hover:text-gray-600"
+                aria-label="Close date picker"
+              >
+                <span className="text-2xl">×</span>
+              </button>
+            </div>
+            
+            <RangeDatePicker
+              value={range}
+              onChange={(r) => {
+                setRange(r);
+                setDateRange([r?.from ?? null, r?.to ?? null]);
+              }}
+              minDate={new Date()}
+              label="Select dates"
+            />
+
+            <div className="mt-4 flex gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setRange(undefined);
+                  setDateRange([null, null]);
+                }}
+              >
+                Clear dates
+              </Button>
+              <Button variant="primary" size="sm" onClick={() => setShowDatePicker(false)}>
+                Done
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Traveler Modal */}
       {showTravelerModal && (
@@ -189,13 +225,9 @@ export default function StickySearchBar({ className = "" }: StickySearchBarProps
                 </div>
               </div>
               
-              <button
-                type="button"
-                onClick={() => setShowTravelerModal(false)}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors"
-              >
+              <Button variant="primary" size="md" fullWidth onClick={() => setShowTravelerModal(false)}>
                 Done
-              </button>
+              </Button>
             </div>
           </div>
         </div>

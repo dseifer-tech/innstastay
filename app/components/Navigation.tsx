@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
+import { Button } from '@/app/components/ui/Button';
 import OptimizedImage from './OptimizedImage';
 import MobileMenu from './MobileMenu';
 
@@ -62,12 +63,9 @@ export default function Navigation() {
                 </a>
               </div>
               <div className="md:hidden">
-                <button
-                  onClick={() => setShowMobileMenu(!showMobileMenu)}
-                  className="p-2 hover:text-blue-600 transition-colors duration-200"
-                >
+                <Button variant="ghost" size="sm" aria-label="Open menu" className="p-2" onClick={() => setShowMobileMenu(!showMobileMenu)}>
                   <Menu className="w-6 h-6" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>
