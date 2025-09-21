@@ -6,7 +6,8 @@ export function isMoney(x: any): x is Money {
 
 export function formatMoney(m: Money) {
   try {
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency: m.currency }).format(m.amount)
+    // Use 'en-US' locale explicitly to ensure consistent server/client rendering
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: m.currency }).format(m.amount)
   } catch {
     return `${m.amount} ${m.currency}`
   }

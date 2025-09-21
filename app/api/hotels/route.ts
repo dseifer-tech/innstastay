@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getHotelsForSearch } from '@/lib/hotelSource';
 import { log } from '@/lib/core/log';
 
+export const runtime = 'nodejs';
+
 export async function GET() {
   try {
     const hotels = await getHotelsForSearch();

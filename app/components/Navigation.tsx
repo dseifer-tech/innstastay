@@ -58,9 +58,14 @@ export default function Navigation() {
             </div>
             <div className="flex items-center gap-4">
               <div className="hidden md:block">
-                <a href="/search" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  className="shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  onClick={() => window.location.href = '/search'}
+                >
                   Compare Rates
-                </a>
+                </Button>
               </div>
               <div className="md:hidden">
                 <Button variant="ghost" size="sm" aria-label="Open menu" className="p-2" onClick={() => setShowMobileMenu(!showMobileMenu)}>

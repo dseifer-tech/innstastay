@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/app/components/ui/Button';
 import OptimizedImage from './OptimizedImage';
@@ -10,6 +11,67 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Focus trap and keyboard handling
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Focus the close button when menu opens
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const menuElement = menuRef.current;
+        if (!menuElement) return;
+
+        const focusableElements = menuElement.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+        if (e.shiftKey) {
+          // Shift + Tab (backward)
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement?.focus();
+          }
+        } else {
+          // Tab (forward)
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement?.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Set inert on body content
+    const bodyChildren = Array.from(document.body.children).filter(
+      child => child !== menuRef.current?.parentElement
+    );
+    bodyChildren.forEach(child => {
+      (child as HTMLElement).setAttribute('inert', '');
+    });
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      // Remove inert from body content
+      bodyChildren.forEach(child => {
+        (child as HTMLElement).removeAttribute('inert');
+      });
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
@@ -27,7 +89,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       />
       
       {/* Menu Panel */}
-      <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl">
+      <div ref={menuRef} className="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
@@ -41,7 +103,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                />
               <span className="text-xs text-blue-600 tracking-wide mt-1">Commission-Free Booking</span>
             </div>
-            <Button variant="ghost" size="sm" aria-label="Close menu" className="rounded-full p-2" onClick={onClose}>
+            <Button ref={closeButtonRef} variant="ghost" size="sm" aria-label="Close menu" className="rounded-full p-2" onClick={onClose}>
               <X className="w-6 h-6" />
             </Button>
           </div>
@@ -91,13 +153,18 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
           {/* CTA Section */}
           <div className="p-6 border-t border-gray-100">
-            <a
-              href="/search"
-              className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              onClick={onClose}
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              className="shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              onClick={() => {
+                window.location.href = '/search';
+                onClose();
+              }}
             >
               Search Hotels
-            </a>
+            </Button>
             <p className="text-sm text-gray-500 text-center mt-2">
               Compare direct rates in seconds
             </p>

@@ -116,17 +116,31 @@ export default function StickySearchBar({ className = "" }: StickySearchBarProps
 
       {/* Date Picker Modal */}
       {showDatePicker && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => setShowDatePicker(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setShowDatePicker(false);
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="date-picker-title"
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Select Dates</h3>
-              <button
+              <h3 id="date-picker-title" className="text-lg font-semibold">Select Dates</h3>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setShowDatePicker(false)}
-                className="text-gray-400 hover:text-gray-600"
                 aria-label="Close date picker"
+                className="p-1"
               >
                 <span className="text-2xl">×</span>
-              </button>
+              </Button>
             </div>
             
             <RangeDatePicker

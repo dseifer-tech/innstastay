@@ -1,5 +1,7 @@
 import { draftMode } from 'next/headers'
 
+export const runtime = 'nodejs';
+
 export async function GET(req: Request) {
   const { createClient } = await import('@sanity/client')
   const url = new URL(req.url)

@@ -72,7 +72,10 @@ export function middleware(req: NextRequest) {
 
   // Staging: noindex for all HTML pages (not just admin/api)
   const accept = req.headers.get('accept') || '';
-  if (accept.includes('text/html')) {
+  const host = req.headers.get('host') || '';
+  const blockIndexing = process.env.BLOCK_INDEXING === 'true' || host.endsWith('.vercel.app');
+  
+  if (accept.includes('text/html') && blockIndexing) {
     res.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   }
 

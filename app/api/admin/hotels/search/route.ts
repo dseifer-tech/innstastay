@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs';
+
 const SERPAPI_KEY = process.env.SERPAPI_KEY
 
 function formatDateForSerpAPI(date: Date): string {

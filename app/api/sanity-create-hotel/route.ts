@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@sanity/client';
 
+export const runtime = 'nodejs';
+
 // Normalize project ID to handle dummy values in CI/build environments
 const normalizeProjectId = (projectId: string | undefined): string => {
   if (!projectId) return 'dummy-project-id';

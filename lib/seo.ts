@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import { getBaseUrl } from './url/base'
 
 // Static SEO defaults (no CMS dependency)
 const DEFAULT_SEO = {
   title: 'InnstaStay - Commission-Free Hotel Booking in Toronto',
   description: 'Compare real-time direct hotel rates in downtown Toronto. No middlemen, no fees—book direct and save with InnstaStay.',
-  canonical: 'https://www.innstastay.com',
+  canonical: getBaseUrl(),
   ogImage: '/og/homepage-1200x630.jpg'
 }
 

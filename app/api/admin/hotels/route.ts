@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getAllHotels } from '@/lib/sanity'
 
+export const runtime = 'nodejs';
+
 export async function GET() {
   try {
     const hotels = await getAllHotels()

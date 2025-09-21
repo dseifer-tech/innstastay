@@ -9,11 +9,17 @@ const token     = process.env.SANITY_API_TOKEN;
 const SKIP = process.env.SKIP_SANITY === '1';
 const isFake = !projectId || projectId === 'dummy-project-id' || !dataset;
 
-type SanityLike = { fetch<T=unknown>(q:string, p?:any, o?:any): Promise<T|null> };
+type SanityLike = { 
+  fetch<T=unknown>(q:string, p?:any, o?:any): Promise<T|null>;
+  create?(doc: any): Promise<any>;
+};
 
 export async function getClient(): Promise<SanityLike> {
   if (SKIP || isFake) {
-    return { async fetch() { return null; } };
+    return { 
+      async fetch() { return null; },
+      async create() { return { _id: 'mock-id', _type: 'hotel' }; }
+    };
   }
   const { createClient } = await import('next-sanity'); // lazy server import
   const preview = draftMode().isEnabled;
@@ -23,6 +29,7 @@ export async function getClient(): Promise<SanityLike> {
     dataset,
     apiVersion: '2023-10-01',
     useCdn: !preview && !token,
-    ...(preview && token ? { token, perspective: 'previewDrafts' as any } : {})
+    ...(token ? { token } : {}),
+    ...(preview && token ? { perspective: 'previewDrafts' as any } : {})
   }) as unknown as SanityLike;
 }

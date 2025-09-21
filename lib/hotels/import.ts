@@ -134,8 +134,7 @@ export async function importHotels(payload: ImportPayload): Promise<ImportResult
       primaryImageUrl: hotel.primaryImageUrl || hotel.thumbnail || '',
       bookingLinks: hotel.bookingLinks || [],
       token: hotel.property_token,
-      officialBookingUrl: hotel.website || '',
-      coordinates: hotel.latitude && hotel.longitude ? {
+      gpsCoordinates: hotel.latitude && hotel.longitude ? {
         _type: 'geopoint',
         lat: hotel.latitude,
         lng: hotel.longitude
@@ -173,7 +172,10 @@ export async function importHotels(payload: ImportPayload): Promise<ImportResult
     }
 
     // Create the hotel in Sanity
-    const result = await (client as any).create(hotelDoc);
+    if (!client.create) {
+      throw new Error('Sanity client does not support create operations');
+    }
+    const result = await client.create(hotelDoc);
     
     return { imported: 1, skipped: 0 };
   }
