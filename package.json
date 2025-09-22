@@ -23,7 +23,10 @@
     "sanity:setup": "node scripts/setup-dev-environment.js",
     "sanity:test": "node scripts/test-dev-environment.js",
     "sanity:copy": "node scripts/copy-to-dev.js",
-    "sanity:workflow": "node scripts/test-sanity-workflow.js"
+    "sanity:workflow": "node scripts/test-sanity-workflow.js",
+    "sanity:export": "sanity dataset export $SANITY_DATASET ./.sanity-exports/$(date +%Y%m%d-%H%M%S)",
+    "migrate:hotel:cleanup": "tsx sanity/migrations/2025-09-22-remove-unused-hotel-fields.ts",
+    "typecheck": "tsc -p ."
   },
   "dependencies": {
     "@headlessui/react": "^2.2.7",

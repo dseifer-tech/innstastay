@@ -52,8 +52,7 @@ export async function POST(request: NextRequest) {
       isActive: true,
       primaryImageUrl: validatedData.primaryImageUrl || '',
       bookingLinks: [],
-      token: validatedData.token || '', // This will be set later when pricing is configured
-      bookingTemplate: validatedData.bookingTemplate || ''
+      token: validatedData.token || '' // This will be set later when pricing is configured
     }
 
     // Use the new guarded Sanity client

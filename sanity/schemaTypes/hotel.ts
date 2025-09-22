@@ -1,16 +1,10 @@
 import {defineField, defineType} from 'sanity'
-import seo from './seo'
 
 export default defineType({
   name: 'hotel',
   title: 'Hotel',
   type: 'document',
   fields: [
-    defineField({
-      name: 'brand',
-      title: 'Brand',
-      type: 'string'
-    }),
     defineField({
       name: 'name',
       title: 'Hotel Name',
@@ -159,12 +153,6 @@ export default defineType({
       }
     }),
     defineField({
-      name: 'bookingTemplate',
-      title: 'Official Booking Template',
-      type: 'string',
-      description: 'Supports tokens like {datein}, {dateout}, {adults}, {children}, {rooms}'
-    }),
-    defineField({
       name: 'bookingLinks',
       title: 'Booking Links (legacy)',
       type: 'array',
@@ -184,7 +172,6 @@ export default defineType({
       description: 'Is this hotel active and visible on the site?',
       initialValue: true
     }),
-    defineField({ name: 'seo', type: 'seo', title: 'SEO' }),
   ],
   preview: {
     select: {

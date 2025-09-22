@@ -18,7 +18,6 @@ export const hotelCreateSchema = z.object({
   seoDescription: z.string().max(500, 'SEO description is too long').optional(),
   primaryImageUrl: z.string().url('Invalid image URL').optional(),
   token: z.string().optional(),
-  bookingTemplate: z.string().url('Invalid booking template URL').optional(),
 })
 
 export const hotelUpdateSchema = hotelCreateSchema.partial().extend({
