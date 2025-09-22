@@ -10,6 +10,7 @@ import AboutContent from './components/AboutContent';
 import TrustSignals from './components/TrustSignals';
 import type { Hotel } from '@/types/hotel';
 import { log } from '@/lib/core/log';
+import { Pause, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HomePageClientProps {
   initialHotels?: Hotel[];
@@ -18,6 +19,8 @@ interface HomePageClientProps {
 export default function HomePageClient({ initialHotels = [] }: HomePageClientProps) {
   const [hotels, setHotels] = useState<Hotel[]>(initialHotels);
   const [hotelsLoading, setHotelsLoading] = useState(initialHotels.length === 0);
+  const [carouselPaused, setCarouselPaused] = useState(false);
+  const [currentScrollPosition, setCurrentScrollPosition] = useState(0);
 
 
   // Fetch hotels only if not pre-loaded from server
@@ -74,12 +77,43 @@ export default function HomePageClient({ initialHotels = [] }: HomePageClientPro
               <p className="text-lg text-neutral-600">Direct rates from Toronto&apos;s top properties</p>
             </div>
 
+            {/* Carousel Controls */}
+            {!hotelsLoading && hotels.length > 0 && (
+              <div className="flex justify-center gap-4 mb-6">
+                <button
+                  onClick={() => setCarouselPaused(!carouselPaused)}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-200 text-sm font-medium text-gray-700"
+                  aria-label={carouselPaused ? 'Resume carousel' : 'Pause carousel'}
+                >
+                  {carouselPaused ? (
+                    <>
+                      <Play className="w-4 h-4" />
+                      <span>Resume</span>
+                    </>
+                  ) : (
+                    <>
+                      <Pause className="w-4 h-4" />
+                      <span>Pause</span>
+                    </>
+                  )}
+                </button>
+                <span className="px-4 py-2 text-sm text-gray-500 bg-gray-50 rounded-full">
+                  Scroll to see all hotels →
+                </span>
+              </div>
+            )}
+
             {/* Horizontal scrolling carousel */}
-            <div className="relative overflow-hidden group">
+            <div className="relative overflow-hidden">
               <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-slate-50 via-blue-50 to-transparent z-10 pointer-events-none"></div>
               <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-50 via-blue-50 to-transparent z-10 pointer-events-none"></div>
               
-              <div className="flex gap-4 animate-scroll group-hover:pause">
+              <div 
+                className={`flex gap-4 transition-transform duration-300 ${!carouselPaused ? 'animate-scroll' : ''}`}
+                style={{
+                  animationPlayState: carouselPaused ? 'paused' : 'running'
+                }}
+              >
                 {hotelsLoading ? (
                   <div className="flex gap-4">
                     {[...Array(6)].map((_, i) => (

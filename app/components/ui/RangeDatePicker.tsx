@@ -70,14 +70,13 @@ export default function RangeDatePicker({
         align="start"
         side="bottom"
         sideOffset={8}
-        className="min-w-[560px] p-0 border-2 border-blue-100 shadow-2xl ring-1 ring-black/5"
+        className="w-full max-w-sm sm:max-w-lg p-0 border-2 border-blue-100 shadow-2xl ring-1 ring-black/5"
       >
         <div className="rounded-3xl bg-white p-4 sm:p-6">
           <Calendar
             mode="range"
             selected={range}
             onSelect={(newRange) => {
-              console.log('Date picker selection:', newRange);
               
               if (!newRange?.from) {
                 // Clear selection
@@ -112,7 +111,6 @@ export default function RangeDatePicker({
               className="text-base font-bold text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-xl transition-all duration-200 font-mono"
               onClick={() => {
                 setRange({ from: undefined, to: undefined });
-                console.log('Date range cleared');
               }}
             >
               Clear dates

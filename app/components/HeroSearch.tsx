@@ -31,17 +31,29 @@ export default function HeroSearch({
   const [range, setRange] = useState<DateRange | undefined>({ from: undefined, to: undefined });
   const [adults, setAdults] = useState(2);
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState('');
 
   const checkin  = useMemo(() => toYMD(range?.from ?? undefined), [range?.from]);
   const checkout = useMemo(() => toYMD(range?.to ?? undefined),   [range?.to]);
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
+    // Clear previous errors
+    setFormError('');
+    
     // Prevent submit if dates are missing
     if (!checkin || !checkout) {
       e.preventDefault();
-      alert('Please choose both check-in and check-out dates.');
+      setFormError('Please choose both check-in and check-out dates.');
       return;
     }
+    
+    // Validate guest count
+    if (adults < 1 || adults > 10) {
+      e.preventDefault();
+      setFormError('Guest count must be between 1 and 10 adults.');
+      return;
+    }
+    
     setLoading(true);
   }
   return (
@@ -104,17 +116,26 @@ export default function HeroSearch({
                 <input type="hidden" name="rooms"    value="1" />
 
                 <div className="relative">
+                  <label htmlFor="adults-input" className="sr-only">
+                    Number of adult guests (1-10)
+                  </label>
                   <Users className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                   <input
+                    id="adults-input"
                     type="number"
                     name="adults"
                     min={1}
+                    max={10}
                     value={adults}
                     onChange={(e) => setAdults(Number(e.target.value))}
                     className="font-date w-full sm:w-24 rounded-xl border border-black/10 pl-9 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                     placeholder="Adults"
                     disabled={loading}
+                    aria-describedby="adults-help"
                   />
+                  <div id="adults-help" className="sr-only">
+                    Enter the number of adult guests, between 1 and 10
+                  </div>
                 </div>
 
                 <Button type="submit" loading={loading} disabled={loading}>
@@ -122,8 +143,18 @@ export default function HeroSearch({
                 </Button>
               </div>
 
+              {/* Inline error display */}
+              {formError && (
+                <div className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-start gap-2">
+                  <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <span>{formError}</span>
+                </div>
+              )}
+
               <p className="sr-only" aria-live="polite">
-                {loading ? 'Fetching direct rates…' : ''}
+                {loading ? 'Fetching direct rates…' : formError}
               </p>
             </form>
           </div>

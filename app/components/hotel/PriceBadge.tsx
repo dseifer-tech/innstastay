@@ -7,9 +7,10 @@ type Props = {
   price?: { currency: string; nightlyFrom: number } | (Money & { source?: string });
   className?: string;
   variant?: 'default' | 'blue' | 'purple' | 'orange';
+  includeTaxDisclaimer?: boolean;
 };
 
-export default function PriceBadge({ price, className, variant = 'default' }: Props) {
+export default function PriceBadge({ price, className, variant = 'default', includeTaxDisclaimer = true }: Props) {
   if (!price) return null;
 
   const getVariantStyles = () => {
@@ -25,6 +26,9 @@ export default function PriceBadge({ price, className, variant = 'default' }: Pr
     }
   };
 
+  const currency = ('nightlyFrom' in price) ? price.currency : price.currency;
+  const displayCurrency = currency === 'CAD' ? 'CAD' : currency;
+
   return (
     <div className={[
       "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold shadow-sm transition-all duration-200",
@@ -32,12 +36,25 @@ export default function PriceBadge({ price, className, variant = 'default' }: Pr
       "hover:shadow-md hover:scale-105 backdrop-blur-sm",
       className
     ].filter(Boolean).join(" ")}>
-      <span className="text-yellow-200">💰</span>
-      {('nightlyFrom' in price)
-        ? <span>From {formatMoney({ currency: price.currency, amount: price.nightlyFrom })}/night</span>
-        : isMoney(price)
-          ? <span>{formatMoney(price)}</span>
-          : null}
+      {('nightlyFrom' in price) ? (
+        <div className="flex flex-col items-center">
+          <span>From {formatMoney({ currency: price.currency, amount: price.nightlyFrom })}/night</span>
+          {includeTaxDisclaimer && (
+            <span className="text-xs opacity-75">
+              {displayCurrency} • before taxes
+            </span>
+          )}
+        </div>
+      ) : isMoney(price) ? (
+        <div className="flex flex-col items-center">
+          <span>{formatMoney(price)}</span>
+          {includeTaxDisclaimer && (
+            <span className="text-xs opacity-75">
+              {displayCurrency} • before taxes
+            </span>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
