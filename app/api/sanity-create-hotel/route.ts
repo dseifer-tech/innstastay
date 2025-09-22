@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@sanity/client';
 import { validateOrigin } from '@/lib/security';
 import { ENV } from '@/lib/env';
+import { hotelCreateSchema } from '@/lib/validations/hotel';
 import { z } from 'zod';
 
 export const runtime = 'nodejs';
@@ -28,7 +29,7 @@ const shouldSkipSanity = () => {
 const createNoOpClient = () => ({
   fetch: async () => {
     console.warn('Sanity client: SKIP_SANITY=1 or dummy envs, returning empty results');
-    return [];
+    return null; // Return null to indicate no existing hotel found
   },
   delete: async (id: string) => {
     console.warn('Sanity client: SKIP_SANITY=1, skipping delete operation for:', id);
@@ -62,26 +63,13 @@ const client = shouldSkipSanity()
       useCdn: false,
     });
 
-// Validation schema for hotel creation
-const CreateHotelSchema = z.object({
-  name: z.string().min(1).max(200),
-  slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/),
-  address: z.string().min(1).max(500),
-  city: z.string().min(1).max(100),
-  area: z.string().max(100).optional(),
-  phone: z.string().max(50).optional(),
-  rating: z.number().min(0).max(5),
-  hotelClass: z.number().int().min(1).max(5),
-  description: z.string().max(2000).optional(),
-  seoTitle: z.string().max(200).optional(),
-  seoDescription: z.string().max(500).optional(),
-  primaryImageUrl: z.string().url().optional(),
-  amenities: z.string().max(1000).optional(),
+// Extend shared hotel schema with Sanity-specific fields
+const CreateHotelSchema = hotelCreateSchema.extend({
   gpsCoordinates: z.object({
     lat: z.number(),
     lng: z.number()
   }).optional(),
-  token: z.string().min(1).max(200)
+  token: z.string().min(1).max(200) // Override to make required for this endpoint
 });
 
 // Authentication check
@@ -147,7 +135,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. Create the hotel document in Sanity
+    // 5. Create the hotel document in Sanity with normalized array fields
     const result = await client.create({
       _type: 'hotel',
       name: hotelData.name,
@@ -165,7 +153,9 @@ export async function POST(request: NextRequest) {
       seoTitle: hotelData.seoTitle,
       seoDescription: hotelData.seoDescription,
       primaryImageUrl: hotelData.primaryImageUrl,
-      amenities: hotelData.amenities,
+      // Normalize array fields to match Sanity schema expectations
+      amenities: hotelData.amenities || [],
+      tags: hotelData.tags || [],
       gpsCoordinates: hotelData.gpsCoordinates,
       token: hotelData.token,
       isActive: true,
