@@ -1,6 +1,10 @@
 /**
  * SOURCE OF TRUTH: SerpAPI network fetch only.
  * Do not transform business data here (no image proxying, no price picking).
+ * 
+ * LOGGING: All pricing logs use log.price.* centralized logging.
+ * Set DEBUG_PRICING=1 for detailed SerpApi response dumps and diagnostics.
+ * Default logs show only essential status and error messages.
  */
 import { log } from "@/lib/core/log";
 import { extractOfficialBest } from "@/lib/live/official";
@@ -73,11 +77,14 @@ export async function fetchOfficialFeatured({
   children?: number;
   rooms?: number;
 }): Promise<OfficialFeaturedData> {
-  console.log(`\n🔍 SERPAPI DEBUG: Fetching rates for token "${token}"`);
-  console.log(`📅 ${checkIn} → ${checkOut} | ${adults} adults, ${children} children, ${rooms} rooms`);
+  // Debug logging only when enabled
+  if (process.env.DEBUG_PRICING === "1") {
+    log.price.debug(`🔍 SERPAPI DEBUG: Fetching rates for token "${token}"`);
+    log.price.debug(`📅 ${checkIn} → ${checkOut} | ${adults} adults, ${children} children, ${rooms} rooms`);
+  }
   
   if (!token || !checkIn || !checkOut) {
-    console.log(`❌ Missing required params: token=${!!token}, checkIn=${!!checkIn}, checkOut=${!!checkOut}`);
+    log.price.warn(`Missing required params: token=${!!token}, checkIn=${!!checkIn}, checkOut=${!!checkOut}`);
     return {};
   }
 
@@ -91,44 +98,47 @@ export async function fetchOfficialFeatured({
     
     const serpApiUrl = `https://serpapi.com/search.json?engine=google_hotels&q=toronto%20hotels&property_token=${token}&check_in_date=${checkIn}&check_out_date=${checkOut}&adults=${adults}&currency=CAD&gl=ca&hl=en&api_key=${serpApiKey}`;
     
-    // Log URL without API key for security
-    const safeUrl = `https://serpapi.com/search.json?engine=google_hotels&property_token=${token}&check_in_date=${checkIn}&check_out_date=${checkOut}&adults=${adults}&currency=CAD&gl=ca&hl=en&api_key=***`;
-    console.log(`🌐 SerpAPI URL: ${safeUrl}`);
+    // Log URL without API key for security (debug only)
+    if (process.env.DEBUG_PRICING === "1") {
+      const safeUrl = `https://serpapi.com/search.json?engine=google_hotels&property_token=${token}&check_in_date=${checkIn}&check_out_date=${checkOut}&adults=${adults}&currency=CAD&gl=ca&hl=en&api_key=***`;
+      log.price.debug(`🌐 SerpAPI URL: ${safeUrl}`);
+    }
     
     const res = await fetchWithRetry(serpApiUrl);
     
     if (!res.ok) {
-      console.log(`❌ SerpAPI failed with status: ${res.status}`);
-      log.price.warn('SerpAPI failed with status:', res.status);
+      log.price.warn(`SerpAPI failed with status: ${res.status}`);
       return {};
     }
 
     const data = await res.json();
     
-    // Redact sensitive response data for security
-    const safeResponseData = {
-      ...data,
-      // Redact potential sensitive fields
-      search_metadata: data.search_metadata ? {
-        ...data.search_metadata,
-        serpapi_endpoint: data.search_metadata.serpapi_endpoint ? '[REDACTED]' : undefined
-      } : undefined,
-      // Keep essential pricing data but redact raw URLs/metadata
-      featured_prices: data.featured_prices?.map((price: any) => ({
-        official: price.official,
-        rate: price.rate,
-        currency: price.currency,
-        // Redact booking links that might contain tracking params
-        link: price.link ? '[REDACTED_BOOKING_LINK]' : undefined,
-        rooms_count: price.rooms?.length || 0
-      })) || [],
-      prices_summary: data.prices ? `${data.prices.length} prices available` : 'No prices'
-    };
-    
-    console.log(`📊 SerpAPI Response (sanitized):`, JSON.stringify(safeResponseData, null, 2));
+    // High-volume response logging only when debugging enabled
+    if (process.env.DEBUG_PRICING === "1") {
+      // Redact sensitive response data for security
+      const safeResponseData = {
+        ...data,
+        // Redact potential sensitive fields
+        search_metadata: data.search_metadata ? {
+          ...data.search_metadata,
+          serpapi_endpoint: data.search_metadata.serpapi_endpoint ? '[REDACTED]' : undefined
+        } : undefined,
+        // Keep essential pricing data but redact raw URLs/metadata
+        featured_prices: data.featured_prices?.map((price: any) => ({
+          official: price.official,
+          rate: price.rate,
+          currency: price.currency,
+          // Redact booking links that might contain tracking params
+          link: price.link ? '[REDACTED_BOOKING_LINK]' : undefined,
+          rooms_count: price.rooms?.length || 0
+        })) || [],
+        prices_summary: data.prices ? `${data.prices.length} prices available` : 'No prices'
+      };
+      
+      log.price.debug(`📊 SerpAPI Response (sanitized):`, JSON.stringify(safeResponseData, null, 2));
+    }
     
     if (data.error) {
-      console.log(`❌ SerpAPI error:`, data.error);
       log.price.warn('SerpAPI returned error:', data.error);
       return {};
     }
@@ -237,11 +247,17 @@ export async function fetchOfficialFeatured({
       }
     }
 
-    console.log(`✅ Final result for token "${token}":`, result);
+    // Final result logging only when debugging enabled
+    if (process.env.DEBUG_PRICING === "1") {
+      log.price.debug(`✅ Final result for token "${token}":`, result);
+    } else {
+      // Minimal success logging
+      log.price.info(`Fetched pricing for token "${token}" - found ${result.nightlyFrom ? 'pricing' : 'no pricing'}`);
+    }
+    
     return result;
   } catch (error) {
-    console.log(`❌ Error fetching rates for token "${token}":`, error);
-    log.price.error('Error fetching official featured data:', error);
+    log.price.error(`Error fetching rates for token "${token}":`, error);
     return {};
   }
 }
