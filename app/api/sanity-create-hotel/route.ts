@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@sanity/client';
+import { validateOrigin } from '@/lib/security';
+import { ENV } from '@/lib/env';
+import { z } from 'zod';
 
 export const runtime = 'nodejs';
 
@@ -59,11 +62,92 @@ const client = shouldSkipSanity()
       useCdn: false,
     });
 
+// Validation schema for hotel creation
+const CreateHotelSchema = z.object({
+  name: z.string().min(1).max(200),
+  slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/),
+  address: z.string().min(1).max(500),
+  city: z.string().min(1).max(100),
+  area: z.string().max(100).optional(),
+  phone: z.string().max(50).optional(),
+  rating: z.number().min(0).max(5),
+  hotelClass: z.number().int().min(1).max(5),
+  description: z.string().max(2000).optional(),
+  seoTitle: z.string().max(200).optional(),
+  seoDescription: z.string().max(500).optional(),
+  primaryImageUrl: z.string().url().optional(),
+  amenities: z.string().max(1000).optional(),
+  gpsCoordinates: z.object({
+    lat: z.number(),
+    lng: z.number()
+  }).optional(),
+  token: z.string().min(1).max(200)
+});
+
+// Authentication check
+function isAuthenticated(request: NextRequest): boolean {
+  // Check for admin session token in headers
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return false;
+  }
+  
+  const token = authHeader.slice(7);
+  return token === ENV.SANITY_API_TOKEN; // Use existing Sanity token for simplicity
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const hotelData = await request.json();
+    // 1. Authentication check
+    if (!isAuthenticated(request)) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Invalid or missing authentication token' },
+        { status: 401 }
+      );
+    }
 
-    // Create the hotel document in Sanity
+    // 2. Origin validation for CSRF protection
+    const origin = request.headers.get('origin');
+    if (!validateOrigin(origin)) {
+      return NextResponse.json(
+        { error: 'Forbidden: Invalid origin' },
+        { status: 403 }
+      );
+    }
+
+    // 3. Parse and validate request body
+    const rawData = await request.json();
+    const validationResult = CreateHotelSchema.safeParse(rawData);
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid hotel data', 
+          details: validationResult.error.issues.map(issue => ({
+            field: issue.path.join('.'),
+            message: issue.message
+          }))
+        },
+        { status: 400 }
+      );
+    }
+
+    const hotelData = validationResult.data;
+
+    // 4. Check for duplicate slug
+    const existingHotel = await client.fetch(
+      `*[_type == "hotel" && slug.current == $slug][0]`,
+      { slug: hotelData.slug }
+    );
+    
+    if (existingHotel) {
+      return NextResponse.json(
+        { error: 'A hotel with this slug already exists' },
+        { status: 409 }
+      );
+    }
+
+    // 5. Create the hotel document in Sanity
     const result = await client.create({
       _type: 'hotel',
       name: hotelData.name,
@@ -84,7 +168,9 @@ export async function POST(request: NextRequest) {
       amenities: hotelData.amenities,
       gpsCoordinates: hotelData.gpsCoordinates,
       token: hotelData.token,
-      isActive: true
+      isActive: true,
+      _createdAt: new Date().toISOString(),
+      _updatedAt: new Date().toISOString()
     });
 
     return NextResponse.json({
@@ -94,8 +180,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
+    console.error('Hotel creation error:', error);
     return NextResponse.json(
-      { error: 'Failed to create hotel' },
+      { error: 'Internal server error while creating hotel' },
       { status: 500 }
     );
   }

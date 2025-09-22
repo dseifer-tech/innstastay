@@ -91,7 +91,9 @@ export async function fetchOfficialFeatured({
     
     const serpApiUrl = `https://serpapi.com/search.json?engine=google_hotels&q=toronto%20hotels&property_token=${token}&check_in_date=${checkIn}&check_out_date=${checkOut}&adults=${adults}&currency=CAD&gl=ca&hl=en&api_key=${serpApiKey}`;
     
-    console.log(`🌐 SerpAPI URL: ${serpApiUrl}`);
+    // Log URL without API key for security
+    const safeUrl = `https://serpapi.com/search.json?engine=google_hotels&property_token=${token}&check_in_date=${checkIn}&check_out_date=${checkOut}&adults=${adults}&currency=CAD&gl=ca&hl=en&api_key=***`;
+    console.log(`🌐 SerpAPI URL: ${safeUrl}`);
     
     const res = await fetchWithRetry(serpApiUrl);
     
@@ -102,7 +104,28 @@ export async function fetchOfficialFeatured({
     }
 
     const data = await res.json();
-    console.log(`📊 SerpAPI Response:`, JSON.stringify(data, null, 2));
+    
+    // Redact sensitive response data for security
+    const safeResponseData = {
+      ...data,
+      // Redact potential sensitive fields
+      search_metadata: data.search_metadata ? {
+        ...data.search_metadata,
+        serpapi_endpoint: data.search_metadata.serpapi_endpoint ? '[REDACTED]' : undefined
+      } : undefined,
+      // Keep essential pricing data but redact raw URLs/metadata
+      featured_prices: data.featured_prices?.map((price: any) => ({
+        official: price.official,
+        rate: price.rate,
+        currency: price.currency,
+        // Redact booking links that might contain tracking params
+        link: price.link ? '[REDACTED_BOOKING_LINK]' : undefined,
+        rooms_count: price.rooms?.length || 0
+      })) || [],
+      prices_summary: data.prices ? `${data.prices.length} prices available` : 'No prices'
+    };
+    
+    console.log(`📊 SerpAPI Response (sanitized):`, JSON.stringify(safeResponseData, null, 2));
     
     if (data.error) {
       console.log(`❌ SerpAPI error:`, data.error);

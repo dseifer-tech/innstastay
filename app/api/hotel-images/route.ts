@@ -95,7 +95,8 @@ export async function GET(req: NextRequest) {
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+    const timeoutMs = ENV.IMAGE_PROXY_TIMEOUT_MS ? parseInt(ENV.IMAGE_PROXY_TIMEOUT_MS) : 8000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
     
     const upstream = await fetch(url.toString(), {
       signal: controller.signal,
@@ -120,6 +121,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: `Invalid content type: ${type}` }, { status: 502 });
     }
 
+    // Enforce size limits from ENV
+    const maxBytes = ENV.IMAGE_PROXY_MAX_BYTES ? parseInt(ENV.IMAGE_PROXY_MAX_BYTES) : 10485760; // 10MB default
+    const contentLength = upstream.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > maxBytes) {
+      return NextResponse.json({ error: `Image too large: ${contentLength} bytes exceeds limit of ${maxBytes}` }, { status: 413 });
+    }
+
     // Improved caching and response headers
     const responseHeaders = {
       'Content-Type': type,
@@ -129,16 +137,53 @@ export async function GET(req: NextRequest) {
       'X-Frame-Options': 'DENY'
     };
 
-    // Stream the body to avoid memory / size issues on Vercel
+    // Stream the body with size enforcement
     if (upstream.body) {
-      return new NextResponse(upstream.body as any, {
-        status: 200,
-        headers: responseHeaders,
-      });
+      const reader = upstream.body.getReader();
+      let totalBytes = 0;
+      const chunks: Uint8Array[] = [];
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          totalBytes += value.length;
+          if (totalBytes > maxBytes) {
+            return NextResponse.json({ 
+              error: `Image too large: ${totalBytes} bytes exceeds limit of ${maxBytes}` 
+            }, { status: 413 });
+          }
+          
+          chunks.push(value);
+        }
+        
+        // Reconstruct the response body
+        const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+        const combined = new Uint8Array(totalLength);
+        let offset = 0;
+        for (const chunk of chunks) {
+          combined.set(chunk, offset);
+          offset += chunk.length;
+        }
+        
+        return new NextResponse(combined, {
+          status: 200,
+          headers: responseHeaders,
+        });
+      } finally {
+        reader.releaseLock();
+      }
     }
 
     // Fallback if no stream available
     const buf = await upstream.arrayBuffer();
+    if (buf.byteLength > maxBytes) {
+      return NextResponse.json({ 
+        error: `Image too large: ${buf.byteLength} bytes exceeds limit of ${maxBytes}` 
+      }, { status: 413 });
+    }
+    
     return new NextResponse(buf, {
       status: 200,
       headers: responseHeaders,

@@ -11,6 +11,7 @@ const EnvSchema = z.object({
   IMAGE_PROXY_TIMEOUT_MS: z.string().optional(),
   BASIC_AUTH_USER: z.string().optional(),
   BASIC_AUTH_PASS: z.string().optional(),
+  SANITY_API_TOKEN: z.string().optional(),
 });
 
 export const ENV = EnvSchema.parse(process.env);

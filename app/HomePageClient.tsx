@@ -11,13 +11,22 @@ import TrustSignals from './components/TrustSignals';
 import type { Hotel } from '@/types/hotel';
 import { log } from '@/lib/core/log';
 
-export default function HomePageClient() {
-  const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [hotelsLoading, setHotelsLoading] = useState(true);
+interface HomePageClientProps {
+  initialHotels?: Hotel[];
+}
+
+export default function HomePageClient({ initialHotels = [] }: HomePageClientProps) {
+  const [hotels, setHotels] = useState<Hotel[]>(initialHotels);
+  const [hotelsLoading, setHotelsLoading] = useState(initialHotels.length === 0);
 
 
-  // Fetch hotels for homepage preview
+  // Fetch hotels only if not pre-loaded from server
   useEffect(() => {
+    if (initialHotels.length > 0) {
+      // Hotels were pre-loaded on server, no need to fetch
+      return;
+    }
+
     const fetchHotels = async () => {
       try {
         setHotelsLoading(true);
@@ -37,7 +46,7 @@ export default function HomePageClient() {
     };
 
     fetchHotels();
-  }, []);
+  }, [initialHotels.length]);
 
   return (
     <>
