@@ -59,8 +59,8 @@ describe('/api/sanity-create-hotel', () => {
       gpsCoordinates: {
         lat: 43.651070,
         lng: -79.347015
-      },
-      token: 'test-property-token-123'
+      }
+      // Note: token not included - auth handled by Bearer header
     };
 
     const request = new NextRequest('http://localhost:3000/api/sanity-create-hotel', {
@@ -92,8 +92,8 @@ describe('/api/sanity-create-hotel', () => {
       city: 'Toronto',
       rating: 4.5,
       hotelClass: 4,
-      amenities: 'Free WiFi, Restaurant, Pool', // String instead of array - should fail
-      token: 'test-property-token-123'
+      amenities: 'Free WiFi, Restaurant, Pool' // String instead of array - should fail
+      // Note: token not required
     };
 
     const request = new NextRequest('http://localhost:3000/api/sanity-create-hotel', {
@@ -132,7 +132,7 @@ describe('/api/sanity-create-hotel', () => {
       rating: 3.5,
       hotelClass: 3,
       // amenities and tags omitted - should default to empty arrays
-      token: 'test-minimal-token-456'
+      // Note: token not required
     };
 
     const request = new NextRequest('http://localhost:3000/api/sanity-create-hotel', {
@@ -154,14 +154,48 @@ describe('/api/sanity-create-hotel', () => {
     expect(data.hotelId).toBe('dummy-id');
   });
 
+  it('should not store token in Sanity document', async () => {
+    const payload = {
+      name: 'Security Test Hotel',
+      slug: 'security-test-hotel-' + Date.now(),
+      description: 'Testing that tokens are not stored',
+      address: '999 Security Street',
+      city: 'Toronto',
+      rating: 4.0,
+      hotelClass: 4
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/sanity-create-hotel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer test-token-12345',
+        'Origin': 'http://localhost:3000'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    // Should succeed
+    expect(response.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.hotelId).toBe('dummy-id');
+    
+    // Verify response doesn't leak any token information
+    expect(JSON.stringify(data)).not.toContain('token');
+    expect(JSON.stringify(data)).not.toContain('Bearer');
+  });
+
   it('should reject unauthenticated requests', async () => {
     const payload = {
       name: 'Unauthorized Hotel',
       slug: 'unauthorized-hotel',
       description: 'Should not be created',
       address: '789 Forbidden Street',
-      city: 'Toronto',
-      token: 'test-token'
+      city: 'Toronto'
+      // Note: token not required
     };
 
     const request = new NextRequest('http://localhost:3000/api/sanity-create-hotel', {

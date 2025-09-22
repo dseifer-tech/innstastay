@@ -1,7 +1,9 @@
 import { getHotelsForSearch } from "@/lib/hotelSource";
 import { normalizeSearchParams } from "@/lib/core/url";
+import { parseSearchFilters, filterHotelsByPriceRange } from "@/lib/utils/search";
 import TopSearchBar from "@/app/components/TopSearchBar";
 import AmenitiesFilter from "@/app/components/AmenitiesFilter";
+import BudgetFilter from "@/app/components/BudgetFilter";
 import SearchResultsClient from "@/app/components/SearchResultsClient";
 import type { Metadata } from 'next';
 import type { Hotel } from '@/types/hotel';
@@ -66,20 +68,18 @@ function buildFilteredFacets(hotels: Hotel[], selectedAmenities: string[]): Arra
 }
 
 export default async function SearchPage({ searchParams }: { searchParams: Record<string, string | undefined> }) {
-  console.log('\n🔍 SEARCH PAGE DEBUG:');
-  console.log('📋 Raw search params:', searchParams);
-  
   const normalizedParams = normalizeSearchParams({ searchParams });
-  console.log('📋 Normalized params:', normalizedParams);
-  
   const allHotels = await getHotelsForSearch(normalizedParams);
-  console.log(`🏨 Found ${allHotels.length} hotels`);
+  
+  // Parse search filters
+  const { minRate, maxRate } = parseSearchFilters(searchParams);
   
   // Get selected amenities from URL
   const selectedAmenities = searchParams.amenities?.split(',').filter(Boolean) || [];
   
-  // Filter hotels by selected amenities
-  const filteredHotels = filterHotelsByAmenities(allHotels, selectedAmenities);
+  // Apply filters in sequence: amenities first, then price
+  let filteredHotels = filterHotelsByAmenities(allHotels, selectedAmenities);
+  filteredHotels = filterHotelsByPriceRange(filteredHotels, minRate, maxRate);
   
   // Build facets for the filtered results
   const facets = buildFilteredFacets(allHotels, selectedAmenities);
@@ -99,10 +99,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Recor
                 selectedAmenities={selectedAmenities}
               />
               
-              {/* Budget Filter Placeholder */}
-              <div className="mt-6 bg-white border border-gray-200 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Budget</h3>
-                <p className="text-sm text-gray-500">Budget filter coming soon...</p>
+              {/* Budget Filter */}
+              <div className="mt-6">
+                <BudgetFilter hotels={allHotels} />
               </div>
             </div>
           </div>

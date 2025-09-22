@@ -63,13 +63,13 @@ const client = shouldSkipSanity()
       useCdn: false,
     });
 
-// Extend shared hotel schema with Sanity-specific fields
+// Extend shared hotel schema with Sanity-specific fields only
 const CreateHotelSchema = hotelCreateSchema.extend({
   gpsCoordinates: z.object({
     lat: z.number(),
     lng: z.number()
-  }).optional(),
-  token: z.string().min(1).max(200) // Override to make required for this endpoint
+  }).optional()
+  // Note: Authentication relies on Bearer header, not token field
 });
 
 // Authentication check
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
       amenities: hotelData.amenities || [],
       tags: hotelData.tags || [],
       gpsCoordinates: hotelData.gpsCoordinates,
-      token: hotelData.token,
+      // Note: token not stored in document for security
       isActive: true,
       _createdAt: new Date().toISOString(),
       _updatedAt: new Date().toISOString()

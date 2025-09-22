@@ -25,23 +25,6 @@
 }
 
 @layer utilities {
-  .animate-scroll {
-    animation: scroll 45s linear infinite;
-  }
-  
-  .group:hover .animate-scroll {
-    animation-play-state: paused;
-  }
-  
-  @keyframes scroll {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-  
   /* Line clamp utilities */
   .line-clamp-1 {
     overflow: hidden;

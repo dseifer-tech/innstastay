@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import HeroSearch from './components/HeroSearch';
 import HotelCard from './components/hotel/HotelCard';
 import FAQ from './components/FAQ';
@@ -10,7 +10,7 @@ import AboutContent from './components/AboutContent';
 import TrustSignals from './components/TrustSignals';
 import type { Hotel } from '@/types/hotel';
 import { log } from '@/lib/core/log';
-import { Pause, Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HomePageClientProps {
   initialHotels?: Hotel[];
@@ -19,9 +19,69 @@ interface HomePageClientProps {
 export default function HomePageClient({ initialHotels = [] }: HomePageClientProps) {
   const [hotels, setHotels] = useState<Hotel[]>(initialHotels);
   const [hotelsLoading, setHotelsLoading] = useState(initialHotels.length === 0);
-  const [carouselPaused, setCarouselPaused] = useState(false);
-  const [currentScrollPosition, setCurrentScrollPosition] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  // Calculate slides per view (responsive)
+  const getSlidesPerView = () => {
+    if (typeof window === 'undefined') return 1;
+    if (window.innerWidth >= 1024) return 3; // lg
+    if (window.innerWidth >= 640) return 2;  // sm
+    return 1; // mobile
+  };
+
+  const [slidesPerView, setSlidesPerView] = useState(getSlidesPerView());
+
+  // Update slides per view on resize
+  useEffect(() => {
+    const handleResize = () => {
+      setSlidesPerView(getSlidesPerView());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Navigation functions
+  const nextSlide = () => {
+    if (hotels.length === 0) return;
+    setCurrentSlide(prev => {
+      const maxSlide = Math.max(0, hotels.length - slidesPerView);
+      return prev >= maxSlide ? 0 : prev + 1;
+    });
+  };
+
+  const prevSlide = () => {
+    if (hotels.length === 0) return;
+    setCurrentSlide(prev => {
+      const maxSlide = Math.max(0, hotels.length - slidesPerView);
+      return prev <= 0 ? maxSlide : prev - 1;
+    });
+  };
+
+  // Auto-scroll effect (optional)
+  useEffect(() => {
+    if (hotels.length <= slidesPerView) return; // No need to auto-scroll if all visible
+
+    const interval = setInterval(nextSlide, 5000); // Auto-advance every 5 seconds
+    return () => clearInterval(interval);
+  }, [hotels.length, slidesPerView]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextSlide();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Fetch hotels only if not pre-loaded from server
   useEffect(() => {
@@ -81,73 +141,78 @@ export default function HomePageClient({ initialHotels = [] }: HomePageClientPro
             {!hotelsLoading && hotels.length > 0 && (
               <div className="flex justify-center gap-4 mb-6">
                 <button
-                  onClick={() => setCarouselPaused(!carouselPaused)}
+                  onClick={prevSlide}
                   className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-200 text-sm font-medium text-gray-700"
-                  aria-label={carouselPaused ? 'Resume carousel' : 'Pause carousel'}
+                  aria-label="Previous hotels"
                 >
-                  {carouselPaused ? (
-                    <>
-                      <Play className="w-4 h-4" />
-                      <span>Resume</span>
-                    </>
-                  ) : (
-                    <>
-                      <Pause className="w-4 h-4" />
-                      <span>Pause</span>
-                    </>
-                  )}
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Previous</span>
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-200 text-sm font-medium text-gray-700"
+                  aria-label="Next hotels"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="w-4 h-4" />
                 </button>
                 <span className="px-4 py-2 text-sm text-gray-500 bg-gray-50 rounded-full">
-                  Scroll to see all hotels →
+                  Use ← → keys to navigate
                 </span>
               </div>
             )}
 
-            {/* Horizontal scrolling carousel */}
+            {/* Hotel Carousel */}
             <div className="relative overflow-hidden">
-              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-slate-50 via-blue-50 to-transparent z-10 pointer-events-none"></div>
-              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-50 via-blue-50 to-transparent z-10 pointer-events-none"></div>
-              
               <div 
-                className={`flex gap-4 transition-transform duration-300 ${!carouselPaused ? 'animate-scroll' : ''}`}
+                ref={scrollContainerRef}
+                className="flex gap-4 transition-transform duration-500 ease-out"
                 style={{
-                  animationPlayState: carouselPaused ? 'paused' : 'running'
+                  transform: `translateX(-${currentSlide * (100 / slidesPerView)}%)`
                 }}
               >
                 {hotelsLoading ? (
-                  <div className="flex gap-4">
-                    {[...Array(6)].map((_, i) => (
-                      <div key={`skeleton-${i}`} className="w-64 sm:w-72 lg:w-80 shrink-0 bg-white rounded-2xl shadow-sm animate-pulse">
-                        <div className="aspect-[4/3] bg-gray-200 rounded-t-2xl"></div>
-                        <div className="p-4 space-y-3">
-                          <div className="h-5 bg-gray-200 rounded w-3/4"></div>
-                          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                          <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                        </div>
+                  // Loading skeleton
+                  [...Array(6)].map((_, i) => (
+                    <div key={`skeleton-${i}`} className="shrink-0 bg-white rounded-2xl shadow-sm animate-pulse" style={{ width: `calc(${100/slidesPerView}% - 1rem)` }}>
+                      <div className="aspect-[4/3] bg-gray-200 rounded-t-2xl"></div>
+                      <div className="p-4 space-y-3">
+                        <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                        <div className="h-6 bg-gray-200 rounded w-1/3"></div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))
                 ) : hotels.length === 0 ? (
                   <p className="text-center text-neutral-600 w-full">No featured hotels available at the moment.</p>
                 ) : (
-                  <>
-                    <div className="flex gap-4">
-                      {hotels.map((hotel) => (
-                        <div key={hotel.id} className="w-64 sm:w-72 lg:w-80 shrink-0">
-                          <HotelCard hotel={hotel} variant="home" />
-                        </div>
-                      ))}
+                  hotels.map((hotel) => (
+                    <div 
+                      key={hotel.id} 
+                      className="shrink-0" 
+                      style={{ width: `calc(${100/slidesPerView}% - 1rem)` }}
+                    >
+                      <HotelCard hotel={hotel} variant="home" />
                     </div>
-                    <div className="flex gap-4">
-                      {hotels.map((hotel) => (
-                        <div key={`${hotel.id}-duplicate`} className="w-64 sm:w-72 lg:w-80 shrink-0">
-                          <HotelCard hotel={hotel} variant="home" />
-                        </div>
-                      ))}
-                    </div>
-                  </>
+                  ))
                 )}
               </div>
+
+              {/* Slide Indicators */}
+              {!hotelsLoading && hotels.length > slidesPerView && (
+                <div className="flex justify-center mt-6 gap-2">
+                  {Array.from({ length: Math.max(0, hotels.length - slidesPerView + 1) }).map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        index === currentSlide ? 'bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
             
             <div className="text-center mt-12">
