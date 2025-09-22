@@ -341,4 +341,81 @@
   display: flex; 
   flex-direction: row; 
   gap: 1rem; 
+}
+
+/* Enhanced date picker styling for better UX */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #1d4ed8; /* blue-700 */
+  --rdp-background-color: #dbeafe; /* blue-100 */
+  --rdp-accent-color-dark: #1e40af; /* blue-800 */
+  --rdp-background-color-dark: #93c5fd; /* blue-300 */
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 2px solid rgba(0, 0, 0, 0.75);
+}
+
+/* Range selection improvements */
+.rdp-day_range_start:not(.rdp-day_range_end) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.rdp-day_range_end:not(.rdp-day_range_start) {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.rdp-day_range_middle {
+  border-radius: 0 !important;
+  background-color: #dbeafe !important; /* blue-100 */
+  color: #1e40af !important; /* blue-800 */
+}
+
+/* Disabled dates styling */
+.rdp-day_disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+  text-decoration: line-through !important;
+  background-color: transparent !important;
+}
+
+.rdp-day_disabled:hover {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Today styling when not selected */
+.rdp-day_today:not(.rdp-day_selected) {
+  background-color: #eff6ff !important; /* blue-50 */
+  color: #1e40af !important; /* blue-800 */
+  font-weight: 600 !important;
+  border: 1px solid #93c5fd !important; /* blue-300 */
+}
+
+/* Selected day styling */
+.rdp-day_selected {
+  background-color: #1d4ed8 !important; /* blue-700 */
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+.rdp-day_selected:hover {
+  background-color: #1e40af !important; /* blue-800 */
+}
+
+/* Hover effects for non-disabled days */
+.rdp-day:not(.rdp-day_disabled):not(.rdp-day_selected):hover {
+  background-color: #f1f5f9 !important; /* slate-100 */
+  color: #0f172a !important; /* slate-900 */
+}
+
+/* Navigation buttons */
+.rdp-nav_button {
+  opacity: 0.7 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.rdp-nav_button:hover {
+  opacity: 1 !important;
+  background-color: #f1f5f9 !important; /* slate-100 */
 } 

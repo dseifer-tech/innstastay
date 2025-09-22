@@ -43,7 +43,10 @@ export default function RangeDatePicker({
     return `${from} — ${to}`;
   }, [range?.from, range?.to, label]);
 
-  const disabledDays = [{ before: minDate ?? new Date() }];
+  // Set minDate to today if not provided
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const disabledDays = [{ before: minDate ?? today }];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -70,9 +73,13 @@ export default function RangeDatePicker({
         align="start"
         side="bottom"
         sideOffset={8}
-        className="w-full max-w-sm sm:max-w-lg p-0 border-2 border-blue-100 shadow-2xl ring-1 ring-black/5"
+        className="w-full max-w-sm sm:max-w-lg p-0 z-[60]"
       >
-        <div className="rounded-3xl bg-white p-4 sm:p-6">
+        <div 
+          className="rounded-2xl border border-slate-200 bg-white shadow-2xl p-3 md:p-4"
+          role="dialog"
+          aria-label="Date range selector"
+        >
           <Calendar
             mode="range"
             selected={range}
@@ -101,27 +108,26 @@ export default function RangeDatePicker({
               }
             }}
             disabled={disabledDays}
-            defaultMonth={range?.from ?? new Date()}
+            defaultMonth={range?.from ?? today}
+            fromDate={today}
             className="font-date"
           />
           
-          <div className="flex items-center justify-between px-3 pb-3 pt-4 border-t-2 border-blue-100">
-            <Button
-              variant="ghost"
-              className="text-base font-bold text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-xl transition-all duration-200 font-mono"
+          <div className="border-t mt-3 pt-3 flex items-center justify-between">
+            <button 
+              className="text-sm underline underline-offset-2 text-gray-600 hover:text-gray-900 transition-colors"
               onClick={() => {
                 setRange({ from: undefined, to: undefined });
               }}
             >
               Clear dates
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-base font-bold text-blue-700 hover:text-blue-900 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-200 font-mono"
+            </button>
+            <button 
+              className="px-4 py-2 rounded-xl bg-black text-white text-sm hover:bg-gray-800 transition-colors"
               onClick={() => setOpen(false)}
             >
               Done
-            </Button>
+            </button>
           </div>
         </div>
       </PopoverContent>
